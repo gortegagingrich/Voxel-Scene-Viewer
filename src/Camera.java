@@ -12,10 +12,12 @@ public class Camera {
 	private float pitch;
 	private Vector3f me;
 
+	private float speed;
+
 	public Camera(float x, float y, float z) {
 		position = new Vector3f(x,y,z);
 		lPosition = new Vector3f(0f,15f,0f);
-
+		speed = 0.001f;
 	}
 
 	public void yaw(float f) {
@@ -26,9 +28,38 @@ public class Camera {
 		pitch -= f;
 	}
 
+	public void moveForward() {
+		// uses pitch
+	}
+
+	public void moveBackward() {
+
+	}
+
+	public void strafeLeft() {
+		float dx, dz; // uses yaw
+		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
+		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
+		position.x -= dx;
+		position.z += dz;
+	}
+
+	public void strafeRight() {
+		float dx, dz; // uses yaw
+
+		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
+		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
+		position.x += dx;
+		position.z -= dz;
+	}
+
 	public void lookThrough() {
 		GL11.glRotatef(pitch,1f,0f,0f);
 		GL11.glRotatef(yaw,0f,1f,0f);
 		GL11.glTranslatef(position.x, position.y, position.z);
+	}
+
+	public Vector3f getPosition() {
+		return position;
 	}
 }

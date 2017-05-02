@@ -2,12 +2,14 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 public class Main {
     private int screenWidth, screenHeight, frameRate;
     private float originX, originY;
     private volatile boolean shouldExit;
     private Camera camera;
+    private DisplayMode displayMode;
 
     private static final String CAPTION = "Program _";
 
@@ -19,6 +21,7 @@ public class Main {
         this.originY = oY;
         this.shouldExit = false;
         this.camera = new Camera(0,0,0);
+        this.displayMode = null;
     }
 
     public synchronized void setExit() {
@@ -36,7 +39,9 @@ public class Main {
     public void start() throws LWJGLException {
        Display.setFullscreen(false);
 
-       Display.setDisplayMode(new DisplayMode(screenWidth, screenHeight));
+       displayMode = new DisplayMode(screenWidth, screenHeight);
+
+       Display.setDisplayMode(displayMode);
        Display.setTitle(CAPTION);
        Display.create();
 
@@ -49,6 +54,7 @@ public class Main {
        GL11.glClearColor(0,0,0,0);
        GL11.glMatrixMode(GL11.GL_PROJECTION);
        GL11.glLoadIdentity();
+	    GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)displayMode.getHeight(), 0.1f, 300.0f);
        GL11.glOrtho(originX, originX + screenWidth, originY, originY + screenHeight,0,-1);
        GL11.glMatrixMode(GL11.GL_MODELVIEW);
        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
@@ -60,7 +66,6 @@ public class Main {
     }
 
     private void render() {
-       Camera camera = new Camera(0,0,0);
        while (!shouldExit && !Display.isCloseRequested()) {
           camera.lookThrough();
 

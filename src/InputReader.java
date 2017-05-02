@@ -78,6 +78,14 @@ public class InputReader implements Runnable {
       if (keyStates.get(Keyboard.KEY_ESCAPE)[0]) {
          parent.setExit();
       }
+
+      if (keyStates.get(Keyboard.KEY_A)[0]) {
+      	parent.getCamera().strafeLeft();
+      }
+
+      if (keyStates.get(Keyboard.KEY_D)[0]) {
+      	parent.getCamera().strafeRight();
+      }
    }
 
    // method: consumeKeyEvents
