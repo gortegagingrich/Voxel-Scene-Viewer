@@ -20,12 +20,17 @@ import java.util.HashMap;
 public class InputReader implements Runnable {
    private Main parent;
    private HashMap<Integer, boolean[]> keyStates;
+   private float mouseSensitivity;
+   private int mouseX, mouseY;
 
    // constructor: InputReader()
    // purpose: sets parent object and initializes keyStates
    public InputReader(Main parent) {
       this.parent = parent;
       this.keyStates = new HashMap<>();
+      this.mouseX = Mouse.getX();
+      this.mouseY = Mouse.getY();
+      this.mouseSensitivity = 0.5f;
 
       // key id gets mapped to {current state, consumed}
       addKey(Keyboard.KEY_ESCAPE);
@@ -81,32 +86,34 @@ public class InputReader implements Runnable {
    // purpose: performs actions associated with key presses that can continue to happen as long as the key is pressed
    // An example would be exiting on escape.
    private void keyEvents() {
+      Camera camera = parent.getCamera();
+
       if (keyStates.get(Keyboard.KEY_ESCAPE)[0]) {
          parent.setExit();
       }
 
       if (keyStates.get(Keyboard.KEY_W)[0]) {
-         parent.getCamera().moveForward();
+         camera.moveForward();
       }
 
       if (keyStates.get(Keyboard.KEY_S)[0]) {
-         parent.getCamera().moveBackward();
+         camera.moveBackward();
       }
 
       if (keyStates.get(Keyboard.KEY_A)[0]) {
-      	parent.getCamera().strafeLeft();
+         camera.strafeLeft();
       }
 
       if (keyStates.get(Keyboard.KEY_D)[0]) {
-      	parent.getCamera().strafeRight();
+         camera.strafeRight();
       }
 
       if (keyStates.get(Keyboard.KEY_SPACE)[0]) {
-         parent.getCamera().moveUp();
+         camera.moveUp();
       }
 
       if (keyStates.get(Keyboard.KEY_LSHIFT)[0]) {
-         parent.getCamera().moveDown();
+         camera.moveDown();
       }
    }
 
@@ -118,6 +125,17 @@ public class InputReader implements Runnable {
    }
 
    private void mouseEvents() {
+      int x,y;
+      Camera camera = parent.getCamera();
 
+      // mouse movement stuff
+      x = Mouse.getX();
+      y = Mouse.getY();
+
+      camera.pitch(y - mouseY);
+      camera.yaw(x - mouseX);
+
+      mouseX = x;
+      mouseY = y;
    }
 }
