@@ -17,7 +17,7 @@ public class Camera {
 	public Camera(float x, float y, float z) {
 		position = new Vector3f(x,y,z);
 		lPosition = new Vector3f(0f,15f,0f);
-		speed = 0.001f;
+		speed = 1f;
 	}
 
 	public void yaw(float f) {
@@ -28,20 +28,42 @@ public class Camera {
 		pitch -= f;
 	}
 
+	public void moveUp() {
+		position.y -= speed;
+	}
+
+	public void moveDown() {
+		position.y += speed;
+	}
+
 	public void moveForward() {
-		// uses pitch
+		// uses yaw
+		float dx, dz;
+
+		dx = speed * (float)Math.sin(Math.toRadians(yaw));
+		dz = speed * (float)Math.cos(Math.toRadians(yaw));
+
+		position.x -= dx;
+		position.z += dz;
 	}
 
 	public void moveBackward() {
+		// uses yaw
+		float dx, dz;
 
+		dx = speed * (float)Math.sin(Math.toRadians(yaw));
+		dz = speed * (float)Math.cos(Math.toRadians(yaw));
+
+		position.x += dx;
+		position.z -= dz;
 	}
 
 	public void strafeLeft() {
 		float dx, dz; // uses yaw
 		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
 		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
-		position.x -= dx;
-		position.z += dz;
+		position.x += dx;
+		position.z -= dz;
 	}
 
 	public void strafeRight() {
@@ -49,8 +71,8 @@ public class Camera {
 
 		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
 		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
-		position.x += dx;
-		position.z -= dz;
+		position.x -= dx;
+		position.z += dz;
 	}
 
 	public void lookThrough() {

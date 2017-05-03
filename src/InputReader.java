@@ -41,6 +41,7 @@ public class InputReader implements Runnable {
    // purpose: contains loop that updates the states in keyStates and performs actions associated with those keys
    // when necessary using keyEvents() and consumeKeyEvents()
    public void run() {
+      long start;
       while (!parent.getExit()) {
          // update key states
          updateKeyStates();
@@ -49,6 +50,11 @@ public class InputReader implements Runnable {
          keyEvents();
          mouseEvents();
          consumeKeyEvents();
+
+         start = System.currentTimeMillis();
+         while (System.currentTimeMillis() - start < 9) {
+            // wait
+         }
       }
    }
 
@@ -79,12 +85,28 @@ public class InputReader implements Runnable {
          parent.setExit();
       }
 
+      if (keyStates.get(Keyboard.KEY_W)[0]) {
+         parent.getCamera().moveForward();
+      }
+
+      if (keyStates.get(Keyboard.KEY_S)[0]) {
+         parent.getCamera().moveBackward();
+      }
+
       if (keyStates.get(Keyboard.KEY_A)[0]) {
       	parent.getCamera().strafeLeft();
       }
 
       if (keyStates.get(Keyboard.KEY_D)[0]) {
       	parent.getCamera().strafeRight();
+      }
+
+      if (keyStates.get(Keyboard.KEY_SPACE)[0]) {
+         parent.getCamera().moveUp();
+      }
+
+      if (keyStates.get(Keyboard.KEY_LSHIFT)[0]) {
+         parent.getCamera().moveDown();
       }
    }
 

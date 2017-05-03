@@ -39,11 +39,19 @@ public class Main {
     public void start() throws LWJGLException {
        Display.setFullscreen(false);
 
-       displayMode = new DisplayMode(screenWidth, screenHeight);
-
-       Display.setDisplayMode(displayMode);
+       Display.setDisplayMode(new DisplayMode(screenWidth, screenHeight));
        Display.setTitle(CAPTION);
        Display.create();
+
+       DisplayMode[] modes = Display.getAvailableDisplayModes();
+
+       for (int i = 0; i < modes.length; i++) {
+          if (modes[i].getBitsPerPixel() == 32 && modes[i].getHeight() == 480 && modes[i].getWidth() == 640) {
+             System.out.println("found");
+             displayMode = modes[i];
+             break;
+          }
+       }
 
        inputInit();
        glInit();
@@ -55,7 +63,7 @@ public class Main {
        GL11.glMatrixMode(GL11.GL_PROJECTION);
        GL11.glLoadIdentity();
 	    GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)displayMode.getHeight(), 0.1f, 300.0f);
-       GL11.glOrtho(originX, originX + screenWidth, originY, originY + screenHeight,0,-1);
+       GL11.glOrtho(originX, originX + screenWidth, originY, originY + screenHeight,300,-400);
        GL11.glMatrixMode(GL11.GL_MODELVIEW);
        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
     }
@@ -67,18 +75,50 @@ public class Main {
 
     private void render() {
        while (!shouldExit && !Display.isCloseRequested()) {
-          camera.lookThrough();
-
-          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
           GL11.glLoadIdentity();
+          camera.lookThrough();
+          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
 
           // insert render stuff
-          GL11.glBegin(GL11.GL_QUADS);
+          GL11.glBegin(GL11.GL_POLYGON);
             GL11.glColor3f(1f,1f,1f);
-            GL11.glVertex3f(10,10,10);
-            GL11.glVertex3f(200,10,10);
-            GL11.glVertex3f(200,200,0);
-            GL11.glVertex3f(10,200,0);
+            GL11.glVertex3f(170,90,50);
+            GL11.glVertex3f(420,90,50);
+            GL11.glVertex3f(420,90,350);
+            GL11.glVertex3f(170,90,350);
+          GL11.glEnd();
+
+          GL11.glBegin(GL11.GL_POLYGON);
+          GL11.glColor3f(0.7f,0.7f,0.7f);
+             GL11.glVertex3f(170,390,50);
+             GL11.glVertex3f(420,390,50);
+             GL11.glVertex3f(420,390,350);
+             GL11.glVertex3f(170,390,350);
+          GL11.glEnd();
+
+          GL11.glBegin(GL11.GL_POLYGON);
+             GL11.glColor3f(0.6f,0.6f,0.6f);
+             GL11.glVertex3f(170,90,-150);
+             GL11.glVertex3f(170,390,-150);
+             GL11.glVertex3f(170,390,350);
+             GL11.glVertex3f(170,90,350);
+          GL11.glEnd();
+
+          GL11.glBegin(GL11.GL_POLYGON);
+             GL11.glColor3f(0.5f,0.5f,0.5f);
+             GL11.glVertex3f(420,90,50);
+             GL11.glVertex3f(420,390,50);
+             GL11.glVertex3f(420,390,350);
+             GL11.glVertex3f(420,90,350);
+          GL11.glEnd();
+
+          GL11.glBegin(GL11.GL_POLYGON);
+             GL11.glColor3f(0.4f,0.4f,0.4f);
+             GL11.glVertex3f(420,90,50);
+             GL11.glVertex3f(420,390,50);
+             GL11.glVertex3f(170,390,50);
+             GL11.glVertex3f(170,90, 50);
           GL11.glEnd();
 
           Display.update();
