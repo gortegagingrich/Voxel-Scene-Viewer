@@ -124,10 +124,6 @@ public class InputReader implements Runnable {
          camera.moveDown();
 	      moved = true;
       }
-
-      if (moved) {
-      	parent.cameraMoved();
-      }
    }
 
    // method: consumeKeyEvents
@@ -138,9 +134,19 @@ public class InputReader implements Runnable {
    }
 
    private void mouseEvents() {
-      Camera camera = parent.getCamera();
+	   int dx,dy;
+	   Camera camera;
 
-      camera.pitch(Mouse.getDY() * mouseSensitivity);
-      camera.yaw(Mouse.getDX() * mouseSensitivity);
+   	camera = parent.getCamera();
+      dx = Mouse.getDX();
+      dy = Mouse.getDY();
+
+      if (dy != 0) {
+	      camera.pitch(dy * mouseSensitivity);
+      }
+
+      if (dx != 0) {
+	      camera.yaw(dx * mouseSensitivity);
+      }
    }
 }

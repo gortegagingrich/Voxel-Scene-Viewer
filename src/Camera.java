@@ -5,18 +5,18 @@ import org.lwjgl.opengl.GL11;
  * Created by gabriel on 5/2/17.
  */
 public class Camera {
+	private static final float MIN_PITCH = -90;
+	private static final float MAX_PITCH = 90;
+
 	private Vector3f position;
-	private Vector3f lPosition;
 
 	private float yaw;
 	private float pitch;
-	private Vector3f me;
 
 	private float speed;
 
 	public Camera(float x, float y, float z) {
 		position = new Vector3f(x,y,z);
-		lPosition = new Vector3f(0f,15f,0f);
 		speed = 1f;
 	}
 
@@ -26,6 +26,12 @@ public class Camera {
 
 	public void pitch(float f) {
 		pitch -= f;
+
+		if (pitch > MAX_PITCH) {
+			pitch = MAX_PITCH;
+		} else if (pitch < MIN_PITCH) {
+			pitch = MIN_PITCH;
+		}
 	}
 
 	public void moveUp() {
@@ -53,13 +59,13 @@ public class Camera {
 
 		dx = speed * (float)Math.sin(Math.toRadians(yaw));
 		dz = speed * (float)Math.cos(Math.toRadians(yaw));
-
 		position.x += dx;
 		position.z -= dz;
 	}
 
 	public void strafeLeft() {
 		float dx, dz; // uses yaw
+
 		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
 		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
 		position.x += dx;

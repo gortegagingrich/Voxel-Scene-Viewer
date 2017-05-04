@@ -8,12 +8,10 @@ import java.util.ArrayList;
 
 public class Main {
 	private int screenWidth, screenHeight, frameRate;
-	private float originX, originY;
 	private volatile boolean         shouldExit;
 	private          Camera          camera;
 	private          DisplayMode     displayMode;
 	private          ArrayList<Cube> cubes;
-	private volatile boolean cameraMoved;
 
 	private static final String CAPTION = "Program _";
 
@@ -21,13 +19,10 @@ public class Main {
 		this.screenWidth = width;
 		this.screenHeight = height;
 		this.frameRate = frameRate;
-		this.originX = oX;
-		this.originY = oY;
 		this.shouldExit = false;
 		this.camera = new Camera(0, 0, 0);
 		this.displayMode = null;
 		this.cubes = new ArrayList<>();
-		this.cameraMoved = false;
 		this.cubes.add(new Cube(0,0,0,64,this.camera));
 	}
 
@@ -41,10 +36,6 @@ public class Main {
 
 	public boolean getExit() {
 		return shouldExit;
-	}
-
-	public synchronized void cameraMoved() {
-		cameraMoved = true;
 	}
 
 	public void start() throws LWJGLException {
