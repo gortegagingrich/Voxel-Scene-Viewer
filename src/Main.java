@@ -73,12 +73,16 @@ public class Main {
 	}
 
 	private void render() {
+		Cube cube = new Cube(0,0,0,64,camera);
+
 		while (!shouldExit && !Display.isCloseRequested()) {
 			GL11.glLoadIdentity();
 			camera.lookThrough();
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// insert render stuff
+			cube.draw();
+			/*
 			GL11.glBegin(GL11.GL_POLYGON);
 			GL11.glColor3f(0.4f, 0.4f, 0.4f);
 			GL11.glVertex3f(128, 0, 0);
@@ -117,7 +121,7 @@ public class Main {
 			GL11.glVertex3f(128, 128, 0);
 			GL11.glVertex3f(128, 128, 128);
 			GL11.glVertex3f(128, 0, 128);
-			GL11.glEnd();
+			GL11.glEnd();*/
 
 
 			Display.update();
