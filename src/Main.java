@@ -22,7 +22,14 @@ public class Main {
 		this.camera = new Camera(0, 0, 0);
 
 		this.cubes = new ArrayList<>();
-		this.cubes.add(new Cube(0,0,0,64));
+
+		for (int i = 0; i < 30; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int k = 0; k < 30; k++) {
+					this.cubes.add(new Cube(i*32,j*32,k*32,32));
+				}
+			}
+		}
 	}
 
 	public void setExit() {
@@ -71,9 +78,14 @@ public class Main {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// insert render stuff
+
+			GL11.glBegin(GL11.GL_QUADS);
+
 			cubes.forEach(cube -> {
 				cube.draw();
 			});
+
+			GL11.glEnd();
 
 			Display.update();
 			Display.sync(frameRate);

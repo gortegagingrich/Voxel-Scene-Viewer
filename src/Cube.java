@@ -65,8 +65,6 @@ public class Cube  {
 	}
 
 	public synchronized void draw() {
-		GL11.glBegin(GL11.GL_QUADS);
-
 		faces.forEach(side -> {
 			GL11.glColor3f(side[4][0], side[4][1], side[4][2]);
 
@@ -74,7 +72,5 @@ public class Cube  {
 				GL11.glVertex3f(side[i][0], side[i][1], side[i][2]);
 			}
 		});
-
-		GL11.glEnd();
 	}
 }
