@@ -14,30 +14,24 @@ public class Cube {
 	private Vector3f cameraPos;
 
 	public Cube(float x, float y, float z, float edgeLength, Camera camera) {
-		float[] avgPoint;
-
 		this.camera = camera;
 		this.cameraPos = new Vector3f(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 		this.sides = new ArrayList<>();
-		avgPoint = new float[3];
 
 		// define all 6 sides and color
 		// keep z constant
-		avgPoint[0] = x + 0.5f*edgeLength;
-		avgPoint[1] = y + 0.5f*edgeLength;
-		avgPoint[2] = z;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x+0.5f*edgeLength,y+0.5f*edgeLength,z
+		}, new float[][] {
 				  {x,y,z},
 				  {x+edgeLength,y,z},
 				  {x+edgeLength,y+edgeLength,z},
 				  {x,y+edgeLength,z},
 				  {(float)Math.random(),(float)Math.random(),(float)Math.random()}
 		}));
-
-		avgPoint[0] = x + 0.5f*edgeLength;
-		avgPoint[1] = y + 0.5f*edgeLength;
-		avgPoint[2] = z + edgeLength;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x+0.5f*edgeLength, y+0.5f*edgeLength, z+edgeLength
+		}, new float[][] {
 				  {x,y,z+edgeLength},
 				  {x+edgeLength,y,z+edgeLength},
 				  {x+edgeLength,y+edgeLength,z+edgeLength},
@@ -46,21 +40,18 @@ public class Cube {
 		}));
 
 		// keep y constant
-		avgPoint[0] = x + 0.5f*edgeLength;
-		avgPoint[1] = y;
-		avgPoint[2] = z + 0.5f*edgeLength;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x+0.5f*edgeLength,y,z+0.5f*edgeLength
+		}, new float[][] {
 				  {x,y,z},
 				  {x+edgeLength,y,z},
 				  {x+edgeLength,y,z+edgeLength},
 				  {x,y,z+edgeLength},
 				  {(float)Math.random(),(float)Math.random(),(float)Math.random()}
 		}));
-
-		avgPoint[0] = x + 0.5f*edgeLength;
-		avgPoint[1] = y + edgeLength;
-		avgPoint[2] = z + 0.5f*edgeLength;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x+0.5f*edgeLength, y+edgeLength, z + 0.5f*edgeLength
+		}, new float[][] {
 				  {x,y+edgeLength,z},
 				  {x+edgeLength,y+edgeLength,z},
 				  {x+edgeLength,y+edgeLength,z+edgeLength},
@@ -69,21 +60,18 @@ public class Cube {
 		}));
 
 		// keep x constant
-		avgPoint[0] = x;
-		avgPoint[1] = y + 0.5f*edgeLength;
-		avgPoint[2] = z + 0.5f*edgeLength;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x, y+0.5f*edgeLength, z+0.5f*edgeLength
+		}, new float[][] {
 				  {x,y,z},
 				  {x,y+edgeLength,z},
 				  {x,y+edgeLength,z+edgeLength},
 				  {x,y,z+edgeLength},
 				  {(float)Math.random(),(float)Math.random(),(float)Math.random()}
 		}));
-
-		avgPoint[0] = x + edgeLength;
-		avgPoint[1] = y + 0.5f*edgeLength;
-		avgPoint[2] = z + 0.5f*edgeLength;
-		sides.add(new Pair<>(Arrays.copyOf(avgPoint,3), new float[][] {
+		sides.add(new Pair<>(new float[] {
+				  x+edgeLength,y+0.5f*edgeLength,z+0.5f*edgeLength
+		}, new float[][] {
 				  {x+edgeLength,y,z},
 				  {x+edgeLength,y+edgeLength,z},
 				  {x+edgeLength,y+edgeLength,z+edgeLength},
@@ -116,11 +104,11 @@ public class Cube {
 		});
 	}
 
-	public void draw() {
+	public synchronized void draw() {
 		//reorderSides();
 
 		sides.forEach(side -> {
-			GL11.glBegin(GL11.GL_POLYGON);
+			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glColor3f(side.getValue()[4][0], side.getValue()[4][1], side.getValue()[4][2]);
 
 			for (int i = 0; i < 4; i++) {

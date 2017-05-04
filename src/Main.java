@@ -4,12 +4,16 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import java.util.ArrayList;
+
 public class Main {
 	private int screenWidth, screenHeight, frameRate;
 	private float originX, originY;
-	private volatile boolean     shouldExit;
-	private          Camera      camera;
-	private          DisplayMode displayMode;
+	private volatile boolean         shouldExit;
+	private          Camera          camera;
+	private          DisplayMode     displayMode;
+	private          ArrayList<Cube> cubes;
+	private volatile boolean cameraMoved;
 
 	private static final String CAPTION = "Program _";
 
@@ -22,9 +26,12 @@ public class Main {
 		this.shouldExit = false;
 		this.camera = new Camera(0, 0, 0);
 		this.displayMode = null;
+		this.cubes = new ArrayList<>();
+		this.cameraMoved = false;
+		this.cubes.add(new Cube(0,0,0,64,this.camera));
 	}
 
-	public synchronized void setExit() {
+	public void setExit() {
 		shouldExit = true;
 	}
 
@@ -34,6 +41,10 @@ public class Main {
 
 	public boolean getExit() {
 		return shouldExit;
+	}
+
+	public synchronized void cameraMoved() {
+		cameraMoved = true;
 	}
 
 	public void start() throws LWJGLException {
@@ -62,7 +73,7 @@ public class Main {
 		GL11.glClearColor(0, 0, 0, 0);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0f, 300.0f);
+		GLU.gluPerspective(480f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 1000f);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}
@@ -73,56 +84,16 @@ public class Main {
 	}
 
 	private void render() {
-		Cube cube = new Cube(0,0,0,64,camera);
-
 		while (!shouldExit && !Display.isCloseRequested()) {
 			GL11.glLoadIdentity();
 			camera.lookThrough();
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// insert render stuff
-			cube.draw();
-			/*
-			GL11.glBegin(GL11.GL_POLYGON);
-			GL11.glColor3f(0.4f, 0.4f, 0.4f);
-			GL11.glVertex3f(128, 0, 0);
-			GL11.glVertex3f(128, 128, 0);
-			GL11.glVertex3f(0, 128, 0);
-			GL11.glVertex3f(0, 0, 0);
-			GL11.glEnd();
-
-			GL11.glBegin(GL11.GL_POLYGON);
-			GL11.glColor3f(1f, 1f, 1f);
-			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(128, 0, 0);
-			GL11.glVertex3f(128, 0, 128);
-			GL11.glVertex3f(0, 0, 128);
-			GL11.glEnd();
-
-			GL11.glBegin(GL11.GL_POLYGON);
-			GL11.glColor3f(0.7f, 0.7f, 0.7f);
-			GL11.glVertex3f(0, 128, 0);
-			GL11.glVertex3f(128, 128, 0);
-			GL11.glVertex3f(128, 128, 128);
-			GL11.glVertex3f(0, 128, 128);
-			GL11.glEnd();
-
-			GL11.glBegin(GL11.GL_POLYGON);
-			GL11.glColor3f(0.6f, 0.6f, 0.6f);
-			GL11.glVertex3f(0, 0, 0);
-			GL11.glVertex3f(0, 128, 0);
-			GL11.glVertex3f(0, 128, 128);
-			GL11.glVertex3f(0, 0, 128);
-			GL11.glEnd();
-
-			GL11.glBegin(GL11.GL_POLYGON);
-			GL11.glColor3f(0.5f, 0.5f, 0.5f);
-			GL11.glVertex3f(128, 0, 0);
-			GL11.glVertex3f(128, 128, 0);
-			GL11.glVertex3f(128, 128, 128);
-			GL11.glVertex3f(128, 0, 128);
-			GL11.glEnd();*/
-
+			cubes.forEach(cube -> {
+				cube.draw();
+			});
 
 			Display.update();
 			Display.sync(frameRate);
