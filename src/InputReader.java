@@ -39,6 +39,7 @@ public class InputReader implements Runnable {
       addKey(Keyboard.KEY_D);
       addKey(Keyboard.KEY_SPACE);
       addKey(Keyboard.KEY_LSHIFT);
+      addKey(Keyboard.KEY_TAB);
    }
 
    // method: run
@@ -63,7 +64,7 @@ public class InputReader implements Runnable {
    }
 
    private void addKey(int key) {
-      keyStates.put(key, new boolean[] {false, false});
+      keyStates.put(key, new boolean[] {false, true});
    }
 
    // method: updateKeyStates
@@ -89,7 +90,6 @@ public class InputReader implements Runnable {
    	Camera camera;
 
       camera = parent.getCamera();
-      moved = false;
 
       if (keyStates.get(Keyboard.KEY_ESCAPE)[0]) {
          parent.setExit();
@@ -97,32 +97,26 @@ public class InputReader implements Runnable {
 
       if (keyStates.get(Keyboard.KEY_W)[0]) {
          camera.moveForward();
-         moved = true;
       }
 
       if (keyStates.get(Keyboard.KEY_S)[0]) {
          camera.moveBackward();
-	      moved = true;
       }
 
       if (keyStates.get(Keyboard.KEY_A)[0]) {
          camera.strafeLeft();
-	      moved = true;
       }
 
       if (keyStates.get(Keyboard.KEY_D)[0]) {
          camera.strafeRight();
-	      moved = true;
       }
 
       if (keyStates.get(Keyboard.KEY_SPACE)[0]) {
          camera.moveUp();
-	      moved = true;
       }
 
       if (keyStates.get(Keyboard.KEY_LSHIFT)[0]) {
          camera.moveDown();
-	      moved = true;
       }
    }
 
@@ -130,23 +124,28 @@ public class InputReader implements Runnable {
    // purpose: performs actions associated with key presses that should only happen once per key press
    // An example would be toggling a setting on a key press.
    private void consumeKeyEvents() {
-      // none of these events yet
+      if (!keyStates.get(Keyboard.KEY_TAB)[1]) {
+         Mouse.setGrabbed(!Mouse.isGrabbed());
+         keyStates.get(Keyboard.KEY_TAB)[1] = true;
+      }
    }
 
    private void mouseEvents() {
 	   int dx,dy;
 	   Camera camera;
 
-   	camera = parent.getCamera();
-      dx = Mouse.getDX();
-      dy = Mouse.getDY();
+	   if (Mouse.isGrabbed()) {
+         camera = parent.getCamera();
+         dx = Mouse.getDX();
+         dy = Mouse.getDY();
 
-      if (dy != 0) {
-	      camera.pitch(dy * mouseSensitivity);
-      }
+         if (dy != 0) {
+            camera.pitch(dy * mouseSensitivity);
+         }
 
-      if (dx != 0) {
-	      camera.yaw(dx * mouseSensitivity);
+         if (dx != 0) {
+            camera.yaw(dx * mouseSensitivity);
+         }
       }
    }
 }

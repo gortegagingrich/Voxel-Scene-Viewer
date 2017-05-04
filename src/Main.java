@@ -10,7 +10,6 @@ public class Main {
 	private int screenWidth, screenHeight, frameRate;
 	private volatile boolean         shouldExit;
 	private          Camera          camera;
-	private          DisplayMode     displayMode;
 	private          ArrayList<Cube> cubes;
 
 	private static final String CAPTION = "Program _";
@@ -21,9 +20,9 @@ public class Main {
 		this.frameRate = frameRate;
 		this.shouldExit = false;
 		this.camera = new Camera(0, 0, 0);
-		this.displayMode = null;
+
 		this.cubes = new ArrayList<>();
-		this.cubes.add(new Cube(0,0,0,64,this.camera));
+		this.cubes.add(new Cube(0,0,0,64));
 	}
 
 	public void setExit() {
@@ -45,16 +44,6 @@ public class Main {
 		Display.setTitle(CAPTION);
 		Display.create();
 
-		DisplayMode[] modes = Display.getAvailableDisplayModes();
-
-		for (int i = 0; i < modes.length; i++) {
-			if (modes[i].getBitsPerPixel() == 32 && modes[i].getHeight() == 480 && modes[i].getWidth() == 640) {
-				System.out.println("found");
-				displayMode = modes[i];
-				break;
-			}
-		}
-
 		inputInit();
 		glInit();
 		render();
@@ -64,7 +53,7 @@ public class Main {
 		GL11.glClearColor(0, 0, 0, 0);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluPerspective(480f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 1000f);
+		GLU.gluPerspective(480f, screenWidth/(float)screenHeight, 0.1f, 500f);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}

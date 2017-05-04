@@ -81,6 +81,7 @@ public class Camera {
 		position.z += dz;
 	}
 
+
 	public void lookThrough() {
 		GL11.glRotatef(pitch,1f,0f,0f);
 		GL11.glRotatef(yaw,0f,1f,0f);
