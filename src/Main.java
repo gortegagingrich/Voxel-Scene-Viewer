@@ -3,7 +3,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-
 import java.util.ArrayList;
 
 public class Main {
@@ -13,6 +12,7 @@ public class Main {
 	private          ArrayList<Cube> cubes;
 
 	private static final String CAPTION = "Program _";
+	private static final int CUBE_COUNT = 1;
 
 	public Main(int width, int height, float oX, float oY, int frameRate) {
 		this.screenWidth = width;
@@ -20,15 +20,13 @@ public class Main {
 		this.frameRate = frameRate;
 		this.shouldExit = false;
 		this.camera = new Camera(0, 0, 0);
-
 		this.cubes = new ArrayList<>();
 
-		for (int i = 0; i < 30; i++) {
-			for (int j = 0; j < 2; j++) {
-				for (int k = 0; k < 30; k++) {
-					this.cubes.add(new Cube(i*32,j*32,k*32,32));
-				}
-			}
+		for (int i = 0; i < CUBE_COUNT; i++) {
+			this.cubes.add(new Cube((float)(Math.random() * 10) * 16,
+			                        (float)(Math.random() * 10) * 16,
+			                        (float)(Math.random() * 10) * 16,
+			                        (float)Math.random() * 32 + 16));
 		}
 	}
 
@@ -96,7 +94,6 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		// write your code here
 		Main main = new Main(640, 480, 0, 0, 60);
 		try {
 			main.start();

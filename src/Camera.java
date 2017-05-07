@@ -1,23 +1,16 @@
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-/**
- * Created by gabriel on 5/2/17.
- */
 public class Camera {
 	private static final float MIN_PITCH = -90;
 	private static final float MAX_PITCH = 90;
-
+	private static final float SPEED = 1f;
 	private Vector3f position;
-
-	private float yaw;
-	private float pitch;
-
-	private float speed;
+	private float    yaw;
+	private float    pitch;
 
 	public Camera(float x, float y, float z) {
 		position = new Vector3f(x,y,z);
-		speed = 1f;
 	}
 
 	public void yaw(float f) {
@@ -34,53 +27,32 @@ public class Camera {
 		}
 	}
 
-	public void moveUp() {
-		position.y -= speed;
-	}
-
-	public void moveDown() {
-		position.y += speed;
-	}
-
-	public void moveForward() {
-		// uses yaw
+	public void move3f(float leftRight, float forwardBackward, float upDown) {
 		float dx, dz;
 
-		dx = speed * (float)Math.sin(Math.toRadians(yaw));
-		dz = speed * (float)Math.cos(Math.toRadians(yaw));
+		dx = 0;
+		dz = 0;
 
+		// set x and z offsets for moving left or right
+		if (leftRight != 0) {
+			dx += SPEED * leftRight * (float) Math.sin(Math.toRadians(yaw + 90f));
+			dz += SPEED * leftRight * (float) Math.cos(Math.toRadians(yaw + 90f));
+		}
+
+		// set x and z offsets for moving forward or backward
+		if (forwardBackward != 0) {
+			dx += SPEED * forwardBackward * (float) Math.sin(Math.toRadians(yaw));
+			dz += SPEED * forwardBackward * (float) Math.cos(Math.toRadians(yaw));
+		}
+
+		// move according to calculated offsets
+		// might want to change this so that it doesn't move significantly faster diagonally
 		position.x -= dx;
 		position.z += dz;
+
+		// move up or down
+		position.y -= upDown * SPEED;
 	}
-
-	public void moveBackward() {
-		// uses yaw
-		float dx, dz;
-
-		dx = speed * (float)Math.sin(Math.toRadians(yaw));
-		dz = speed * (float)Math.cos(Math.toRadians(yaw));
-		position.x += dx;
-		position.z -= dz;
-	}
-
-	public void strafeLeft() {
-		float dx, dz; // uses yaw
-
-		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
-		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
-		position.x += dx;
-		position.z -= dz;
-	}
-
-	public void strafeRight() {
-		float dx, dz; // uses yaw
-
-		dx = speed * (float)Math.sin(Math.toRadians(this.yaw + 90f));
-		dz = speed * (float)Math.cos(Math.toRadians(this.yaw + 90f));
-		position.x -= dx;
-		position.z += dz;
-	}
-
 
 	public void lookThrough() {
 		GL11.glRotatef(pitch,1f,0f,0f);

@@ -1,18 +1,3 @@
-/** *************************************************************
- *		file: InputReader.java
- *		author: G. Ortega-Gingrich
- *		class: CS 445 - Computer Graphics
- *
- *		assignment: program _
- *		date last modified: 4/17/2017
- *
- *		purpose: This is a runnable class that allows for keyboard
- *		input checking to be handled in a separate thread.
- *
- *		Overview of key bindings:
- *		escape:	quit program
- *************************************************************** */
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import java.util.HashMap;
@@ -86,7 +71,7 @@ public class InputReader implements Runnable {
    // purpose: performs actions associated with key presses that can continue to happen as long as the key is pressed
    // An example would be exiting on escape.
    private void keyEvents() {
-   	boolean moved;
+   	float leftRight,frontBack,upDown;
    	Camera camera;
 
       camera = parent.getCamera();
@@ -96,28 +81,36 @@ public class InputReader implements Runnable {
       }
 
       if (keyStates.get(Keyboard.KEY_W)[0]) {
-         camera.moveForward();
-      }
-
-      if (keyStates.get(Keyboard.KEY_S)[0]) {
-         camera.moveBackward();
+         // move forward if W is pressed
+         frontBack = 1;
+      } else if (keyStates.get(Keyboard.KEY_S)[0]) {
+         // move backward if S is pressed
+         frontBack = -1;
+      } else {
+         frontBack = 0;
       }
 
       if (keyStates.get(Keyboard.KEY_A)[0]) {
-         camera.strafeLeft();
-      }
-
-      if (keyStates.get(Keyboard.KEY_D)[0]) {
-         camera.strafeRight();
+         // move left if A is pressed
+         leftRight = -1;
+      } else if (keyStates.get(Keyboard.KEY_D)[0]) {
+         // move right if D is pressed
+         leftRight = 1;
+      } else {
+         leftRight = 0;
       }
 
       if (keyStates.get(Keyboard.KEY_SPACE)[0]) {
-         camera.moveUp();
+         // move up if SPACE is pressed
+         upDown = 1;
+      } else if (keyStates.get(Keyboard.KEY_LSHIFT)[0]) {
+         // move down is LSHIFT is pressed
+         upDown = -1;
+      } else {
+         upDown = 0;
       }
 
-      if (keyStates.get(Keyboard.KEY_LSHIFT)[0]) {
-         camera.moveDown();
-      }
+      camera.move3f(leftRight, frontBack, upDown);
    }
 
    // method: consumeKeyEvents
