@@ -72,9 +72,9 @@ public class InputReader implements Runnable {
    // An example would be exiting on escape.
    private void keyEvents() {
    	float leftRight,frontBack,upDown;
-   	Camera camera;
 
-      camera = parent.getCamera();
+	   leftRight = 0;
+	   frontBack = 0;
 
       if (keyStates.get(Keyboard.KEY_ESCAPE)[0]) {
          parent.setExit();
@@ -82,22 +82,20 @@ public class InputReader implements Runnable {
 
       if (keyStates.get(Keyboard.KEY_W)[0]) {
          // move forward if W is pressed
-         frontBack = 1;
-      } else if (keyStates.get(Keyboard.KEY_S)[0]) {
+         frontBack += 1;
+      }
+      if (keyStates.get(Keyboard.KEY_S)[0]) {
          // move backward if S is pressed
-         frontBack = -1;
-      } else {
-         frontBack = 0;
+         frontBack -= 1;
       }
 
       if (keyStates.get(Keyboard.KEY_A)[0]) {
          // move left if A is pressed
-         leftRight = -1;
-      } else if (keyStates.get(Keyboard.KEY_D)[0]) {
+         leftRight -= 1;
+      }
+      if (keyStates.get(Keyboard.KEY_D)[0]) {
          // move right if D is pressed
-         leftRight = 1;
-      } else {
-         leftRight = 0;
+         leftRight += 1;
       }
 
       if (keyStates.get(Keyboard.KEY_SPACE)[0]) {
@@ -107,10 +105,16 @@ public class InputReader implements Runnable {
          // move down is LSHIFT is pressed
          upDown = -1;
       } else {
-         upDown = 0;
+      	upDown = 0;
       }
 
-      camera.move3f(leftRight, frontBack, upDown);
+      // multipley leftRight and frontBack speeds by 1/sqrt(2)
+      if (leftRight != 0 && frontBack != 0) {
+      	leftRight *= 0.70710678f;
+      	frontBack *= 0.70710678f;
+      }
+
+      parent.getCamera().move3f(leftRight, frontBack, upDown);
    }
 
    // method: consumeKeyEvents

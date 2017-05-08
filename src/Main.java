@@ -26,7 +26,7 @@ public class Main {
 			this.cubes.add(new Cube((float)(Math.random() * 10) * 16,
 			                        (float)(Math.random() * 10) * 16,
 			                        (float)(Math.random() * 10) * 16,
-			                        (float)Math.random() * 32 + 16));
+			                        32));
 		}
 	}
 
@@ -58,7 +58,7 @@ public class Main {
 		GL11.glClearColor(0, 0, 0, 0);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GLU.gluPerspective(480f, screenWidth/(float)screenHeight, 0.1f, 500f);
+		GLU.gluPerspective(screenHeight, screenWidth/(float)screenHeight, 0.1f, screenWidth);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}
