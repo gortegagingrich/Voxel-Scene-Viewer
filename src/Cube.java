@@ -1,13 +1,25 @@
 import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 
-/**
- * Created by gabriel on 5/2/17.
- */
+/***************************************************************
+ * file: Cube.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 1
+ * date last modified: 5/9/2017
+ *
+ * purpose: This class describes a cube object with a given
+ * position and edge length with random colored faces.
+ *
+ ****************************************************************/
 public class Cube  {
 	private ArrayList<float[][]> faces;
 	private float[][] vertices;
 
+	// constructor: Cube
+	// purpose: creates 8 vertices for a cube at the given position with the given edge length
+	// then creates 6 faces with references to those vertices and random colors
 	public Cube(float x, float y, float z, float edgeLength) {
 		this.faces = new ArrayList<>();
 

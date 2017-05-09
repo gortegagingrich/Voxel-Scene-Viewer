@@ -2,12 +2,24 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import java.util.HashMap;
 
+/***************************************************************
+ * file: InputReader.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 1
+ * date last modified: 5/9/2017
+ *
+ * purpose: This Runnable class handles reading all of the
+ * keyboard and mouse inputs and any of the associated actions.
+ *
+ ****************************************************************/
 public class InputReader implements Runnable {
    private Main parent;
    private HashMap<Integer, boolean[]> keyStates;
    private float mouseSensitivity;
 
-   // constructor: InputReader()
+   // constructor: InputReader(Main)
    // purpose: sets parent object and initializes keyStates
    public InputReader(Main parent) {
       this.parent = parent;
@@ -48,6 +60,9 @@ public class InputReader implements Runnable {
       }
    }
 
+   // method: addKey
+	// purpose: adds a key to keyStates for further monitoring
+	// Each key is mapped to a boolean[2] containing whether or not it is pressed and whether or not it was consumed
    private void addKey(int key) {
       keyStates.put(key, new boolean[] {false, true});
    }
@@ -69,7 +84,7 @@ public class InputReader implements Runnable {
 
    // method: keyEvents
    // purpose: performs actions associated with key presses that can continue to happen as long as the key is pressed
-   // An example would be exiting on escape.
+   // Currently handles camera movements and exiting with escape
    private void keyEvents() {
    	float leftRight,frontBack,upDown;
 
@@ -119,7 +134,7 @@ public class InputReader implements Runnable {
 
    // method: consumeKeyEvents
    // purpose: performs actions associated with key presses that should only happen once per key press
-   // An example would be toggling a setting on a key press.
+   // Currently only pays attention to the Tab key, which toggles whether or not the mouse is grabbed
    private void consumeKeyEvents() {
       if (!keyStates.get(Keyboard.KEY_TAB)[1]) {
          Mouse.setGrabbed(!Mouse.isGrabbed());
@@ -127,6 +142,9 @@ public class InputReader implements Runnable {
       }
    }
 
+   // method: mouseEvents
+	// purpose: adjusts the camera's pitch and yaw based on the change in camera position
+	// only works when mouse is grabbed
    private void mouseEvents() {
 	   int dx,dy;
 	   Camera camera;

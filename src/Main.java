@@ -5,6 +5,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import java.util.ArrayList;
 
+/***************************************************************
+ * file: Main.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 1
+ * date last modified: 5/9/2017
+ *
+ * purpose: This program creates an OpenGL window to display a
+ * cube and adjust the camera using they keyboard and mouse
+ *
+ ****************************************************************/
 public class Main {
 	private int screenWidth, screenHeight, frameRate;
 	private volatile boolean         shouldExit;
@@ -14,6 +26,8 @@ public class Main {
 	private static final String CAPTION = "Program _";
 	private static final int CUBE_COUNT = 1;
 
+	// constructor: Main(int, int, float, float, int)
+	// purpose: sets window properties and creates a camera and a random cube
 	public Main(int width, int height, float oX, float oY, int frameRate) {
 		this.screenWidth = width;
 		this.screenHeight = height;
@@ -30,18 +44,26 @@ public class Main {
 		}
 	}
 
+	// method: setExit
+	// purpose: sets private variable to tell main loop to break
 	public void setExit() {
 		shouldExit = true;
 	}
 
+	// method: getCamera
+	// purpose: returns reference to the camera instance
 	public Camera getCamera() { // to be used by InputReader
 		return camera;
 	}
 
+	// method: getExit
+	// purpose: returns whether or not the main loop has exited or should exit
 	public boolean getExit() {
 		return shouldExit;
 	}
 
+	// method: start
+	// purpose: creates display, initializes GL, and starts main loop
 	public void start() throws LWJGLException {
 		Display.setFullscreen(false);
 
@@ -54,6 +76,8 @@ public class Main {
 		render();
 	}
 
+	// method: glInit
+	// purpose: initializes GL to be able to display a 3d scene correctly with a black background
 	private void glInit() {
 		GL11.glClearColor(0, 0, 0, 0);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -63,11 +87,15 @@ public class Main {
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 	}
 
+	// method: inputInit
+	// purpose: creates and starts a new thread to read keyboard inputs
 	private void inputInit() {
 		Thread thread = new Thread(new InputReader(this));
 		thread.start();
 	}
 
+	// method: render
+	// purpose: contains the main loop that looks through the camera and draws each cube
 	private void render() {
 		while (!shouldExit && !Display.isCloseRequested()) {
 			GL11.glLoadIdentity();
@@ -93,6 +121,8 @@ public class Main {
 		Display.destroy();
 	}
 
+	// method: main
+	// purpose: static method called to start the program.
 	public static void main(String[] args) {
 		Main main = new Main(640, 480, 0, 0, 60);
 		try {
