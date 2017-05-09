@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  ****************************************************************/
 public class Cube  {
-	private ArrayList<float[][]> faces;
+	ArrayList<float[][]> faces;
 	private float[][] vertices;
 
 	// constructor: Cube
@@ -41,12 +41,11 @@ public class Cube  {
 				  {x,y+edgeLength,z+edgeLength}
 		};
 
-		// I'm not 100% sure about the vertex
-		// order for the top and bottom faces
-		addFace(0,1,2,3);
-		addFace(1,5,6,2);
-		addFace(5,4,7,6);
-		addFace(4,0,3,7);
+		// modified these to work with test texture
+		addFace(2,3,0,1);
+		addFace(6,2,1,5);
+		addFace(7,6,5,4);
+		addFace(3,7,4,0);
 		addFace(3,2,6,7);
 		addFace(5,4,0,1);
 	}

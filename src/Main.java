@@ -24,7 +24,7 @@ public class Main {
 	private          ArrayList<Cube> cubes;
 
 	private static final String CAPTION = "Program _";
-	private static final int CUBE_COUNT = 1;
+	private static final int CUBE_COUNT = 3;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -37,10 +37,10 @@ public class Main {
 		this.cubes = new ArrayList<>();
 
 		for (int i = 0; i < CUBE_COUNT; i++) {
-			this.cubes.add(new Cube((float)(Math.random() * 10) * 16,
+			this.cubes.add(new TexturedCube((float)(Math.random() * 10) * 16,
 			                        (float)(Math.random() * 10) * 16,
 			                        (float)(Math.random() * 10) * 16,
-			                        32));
+			                        64));
 		}
 	}
 
@@ -71,6 +71,7 @@ public class Main {
 		Display.setTitle(CAPTION);
 		Display.create();
 
+		TexturedCube.initTextureLibrary();
 		inputInit();
 		glInit();
 		render();
@@ -101,6 +102,8 @@ public class Main {
 			GL11.glLoadIdentity();
 			camera.lookThrough();
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// insert render stuff

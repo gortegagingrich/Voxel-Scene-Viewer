@@ -4,6 +4,7 @@
       <root url="jar://$PROJECT_DIR$/libs/jinput.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/lwjgl.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/lwjgl_util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/slick-util.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
