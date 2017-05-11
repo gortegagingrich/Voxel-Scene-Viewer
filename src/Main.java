@@ -38,21 +38,21 @@ public class Main {
 
 		for (int i = 0; i < CUBE_COUNT; i++) {
 			for (int j = 0; j < CUBE_COUNT; j++) {
-				this.cubes.add(new TexturedCube(i*32f, 0f, j*32f, 32f, TexturedCube.BEDROCK));
+				this.cubes.add(new TexturedCube(i*16f, 0f, j*16f, 16f, TexturedCube.BEDROCK));
 
-				for (int k = 1; k < 9; k++) {
-					TexturedCube cube = new TexturedCube(i*32f,k*32f,j*32f,32f,TexturedCube.DIRT);
+				for (int k = 1; k < CUBE_COUNT; k++) {
+					TexturedCube cube = new TexturedCube(i*16f,k*16f,j*16f,16f,TexturedCube.DIRT);
 					this.cubes.add(cube);
 
 					if (i > 0 && i < CUBE_COUNT-1 && j > 0 && j < CUBE_COUNT-1) {
 						cube.deactivate();
 					} else {
 						// deactivate top and bottom faces
-						cube.deactivateFace(4,5);
+						cube.deactivateFace(Cube.TOP, Cube.BOT);
 					}
 				}
 
-				this.cubes.add(new TexturedCube(i*32f, 9*32f, j*32f, 32f, TexturedCube.GRASS));
+				this.cubes.add(new TexturedCube(i*16f, (CUBE_COUNT)*16f, j*16f, 16f, TexturedCube.GRASS));
 			}
 		}
 	}

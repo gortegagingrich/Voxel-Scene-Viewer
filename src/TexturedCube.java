@@ -17,7 +17,6 @@ public class TexturedCube implements Cube {
 	ArrayList<float[][]> faces;
 	private float[][] vertices;
 
-	public static final int CUBE = 0, GRASS = 1, SAND = 2, WATER = 3, DIRT = 4, STONE = 5, BEDROCK = 6;
 	private static final HashMap<Integer, Object[]> textureLibrary = new HashMap<>();
 
 	public TexturedCube(float x, float y, float z, float edgeLength) {
