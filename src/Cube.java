@@ -18,4 +18,8 @@ public interface Cube  {
 	// method: draw
 	// purpose: for each face, draws a each vertex in the defined color
 	public void draw();
+
+	public void deactivate();
+	public boolean isActive();
+	public void deactivateFace(int... face);
 }

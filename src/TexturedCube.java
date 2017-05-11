@@ -1,5 +1,4 @@
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -13,7 +12,8 @@ import java.util.HashMap;
  * Created by Gabriel on 2017/05/09.
  */
 public class TexturedCube implements Cube {
-	private int type;
+	private int     type;
+	private boolean active;
 	ArrayList<float[][]> faces;
 	private float[][] vertices;
 
@@ -27,6 +27,7 @@ public class TexturedCube implements Cube {
 	public TexturedCube(float x, float y, float z, float edgeLength, int type) {
 		this.faces = new ArrayList<>();
 		this.type = type;
+		this.active = true;
 
 		/*
 		rough representation of which vertex is which:
@@ -66,24 +67,22 @@ public class TexturedCube implements Cube {
 		width = (Float)value[3];
 		height = (Float)value[4];
 
-		// assumes that the associated texture is of the following format:
-		// SIDES  TOP
-		// BOT    []
+		// only draw active faces
+		faces.stream()
+				  .filter(face -> face[4][3] == 1f)
+				  .forEach(face -> {
+					  GL11.glTexCoord2f(x, y);
+					  GL11.glVertex3f(face[0][0], face[0][1], face[0][2]);
 
-		// sides
-		faces.forEach(side -> {
-			GL11.glTexCoord2f(x, y);
-			GL11.glVertex3f(side[0][0], side[0][1], side[0][2]);
+					  GL11.glTexCoord2f(x+width, y);
+					  GL11.glVertex3f(face[1][0], face[1][1], face[1][2]);
 
-			GL11.glTexCoord2f(x+width, y);
-			GL11.glVertex3f(side[1][0], side[1][1], side[1][2]);
+					  GL11.glTexCoord2f(x+width,y+height);
+					  GL11.glVertex3f(face[2][0], face[2][1], face[2][2]);
 
-			GL11.glTexCoord2f(x+width,y+height);
-			GL11.glVertex3f(side[2][0], side[2][1], side[2][2]);
-
-			GL11.glTexCoord2f(x,y+height);
-			GL11.glVertex3f(side[3][0], side[3][1], side[3][2]);
-		});
+					  GL11.glTexCoord2f(x,y+height);
+					  GL11.glVertex3f(face[3][0], face[3][1], face[3][2]);
+				  });
 
 		// unbind texture
 		TextureImpl.bindNone();
@@ -92,8 +91,22 @@ public class TexturedCube implements Cube {
 	private void addFace(int v0, int v1, int v2, int v3) {
 		faces.add(new float[][] {
 				  vertices[v0],vertices[v1],vertices[v2],vertices[v3],
-				  {(float)Math.random(),(float)Math.random(),(float)Math.random()}
+				  {(float)Math.random(),(float)Math.random(),(float)Math.random(), 1f}
 		});
+	}
+
+	public void deactivate() {
+		this.active = false;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void deactivateFace(int... face) {
+		for (int i: face) {
+			faces.get(i)[4][3] = 0f;
+		}
 	}
 
 	public static void initTextureLibrary() {
@@ -110,7 +123,6 @@ public class TexturedCube implements Cube {
 			                                   ResourceLoader.getResourceAsStream("textures/block.png"));
 			texWidth = 32f/texture.getImageWidth();
 			texHeight = 32f/texture.getImageHeight();
-			System.out.printf("width: %f\nheight: %f\n", texWidth, texHeight);
 
 			// define for each type as follows:
 			addTextureEntry(CUBE, texture, 0f, 0f, texWidth, texHeight);

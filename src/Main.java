@@ -24,7 +24,7 @@ public class Main {
 	private          ArrayList<Cube> cubes;
 
 	private static final String CAPTION = "Program _";
-	private static final int CUBE_COUNT = 9;
+	private static final int CUBE_COUNT = 30;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -38,7 +38,21 @@ public class Main {
 
 		for (int i = 0; i < CUBE_COUNT; i++) {
 			for (int j = 0; j < CUBE_COUNT; j++) {
-				this.cubes.add(new TexturedCube((float)(i*32), (float)(j * 32), 0, 32));
+				this.cubes.add(new TexturedCube(i*32f, 0f, j*32f, 32f, TexturedCube.BEDROCK));
+
+				for (int k = 1; k < 9; k++) {
+					TexturedCube cube = new TexturedCube(i*32f,k*32f,j*32f,32f,TexturedCube.DIRT);
+					this.cubes.add(cube);
+
+					if (i > 0 && i < CUBE_COUNT-1 && j > 0 && j < CUBE_COUNT-1) {
+						cube.deactivate();
+					} else {
+						// deactivate top and bottom faces
+						cube.deactivateFace(4,5);
+					}
+				}
+
+				this.cubes.add(new TexturedCube(i*32f, 9*32f, j*32f, 32f, TexturedCube.GRASS));
 			}
 		}
 	}
@@ -109,9 +123,10 @@ public class Main {
 
 			GL11.glBegin(GL11.GL_QUADS);
 
-			cubes.forEach(cube -> {
-				cube.draw();
-			});
+			// uses stream() to filter cubes and draw each active one
+			cubes.stream()
+					  .filter(cube -> cube.isActive())
+					  .forEach(cube -> cube.draw());
 
 			GL11.glEnd();
 
