@@ -24,7 +24,7 @@ public class Main {
 	private          ArrayList<Cube> cubes;
 
 	private static final String CAPTION = "Program _";
-	private static final int CUBE_COUNT = 3;
+	private static final int CUBE_COUNT = 9;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -37,10 +37,9 @@ public class Main {
 		this.cubes = new ArrayList<>();
 
 		for (int i = 0; i < CUBE_COUNT; i++) {
-			this.cubes.add(new TexturedCube((float)(Math.random() * 10) * 16,
-			                        (float)(Math.random() * 10) * 16,
-			                        (float)(Math.random() * 10) * 16,
-			                        64));
+			for (int j = 0; j < CUBE_COUNT; j++) {
+				this.cubes.add(new TexturedCube((float)(i*32), (float)(j * 32), 0, 32));
+			}
 		}
 	}
 
