@@ -3,7 +3,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-import java.util.ArrayList;
 
 /***************************************************************
  * file: Main.java
@@ -21,9 +20,7 @@ public class Main {
 	private int screenWidth, screenHeight, frameRate;
 	private volatile boolean         shouldExit;
 	private          Camera          camera;
-	private          ArrayList<Cube> cubes;
-	private ArrayList<SimpleChunk> chunks;
-	private SimpleScene scene;
+	private Chunk scene;
 
 	private static final String CAPTION = "Program _";
 	public static final int CUBE_COUNT = 30;
@@ -35,10 +32,8 @@ public class Main {
 		this.screenHeight = height;
 		this.frameRate = frameRate;
 		this.shouldExit = false;
-		this.camera = new Camera(0, 0, 0);
-		this.cubes = new ArrayList<>();
-		this.chunks = new ArrayList<>();
-		scene = new SimpleScene();
+		this.camera = new Camera(-120, -240, -120);
+		scene = new Chunk();
 	}
 
 	// method: setExit

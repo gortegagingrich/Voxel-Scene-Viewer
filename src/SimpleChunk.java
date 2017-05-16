@@ -77,4 +77,8 @@ public class SimpleChunk {
 			bot++;
 		}
 	}
+
+	public void addFaces(ArrayList<float[][]> list) {
+		list.addAll(this.faces);
+	}
 }

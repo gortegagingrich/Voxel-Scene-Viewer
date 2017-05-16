@@ -45,6 +45,8 @@ public class InputReader implements Runnable {
    public void run() {
       long start;
       while (!parent.getExit()) {
+         start = System.currentTimeMillis();
+
          // update key states
          updateKeyStates();
 
@@ -53,7 +55,6 @@ public class InputReader implements Runnable {
          mouseEvents();
          consumeKeyEvents();
 
-         start = System.currentTimeMillis();
          while (System.currentTimeMillis() - start < 9) {
             // wait
          }
