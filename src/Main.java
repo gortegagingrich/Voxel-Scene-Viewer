@@ -22,9 +22,11 @@ public class Main {
 	private volatile boolean         shouldExit;
 	private          Camera          camera;
 	private          ArrayList<Cube> cubes;
+	private ArrayList<SimpleChunk> chunks;
+	private SimpleScene scene;
 
 	private static final String CAPTION = "Program _";
-	private static final int CUBE_COUNT = 30;
+	public static final int CUBE_COUNT = 30;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -35,26 +37,8 @@ public class Main {
 		this.shouldExit = false;
 		this.camera = new Camera(0, 0, 0);
 		this.cubes = new ArrayList<>();
-
-		for (int i = 0; i < CUBE_COUNT; i++) {
-			for (int j = 0; j < CUBE_COUNT; j++) {
-				this.cubes.add(new TexturedCube(i*16f, 0f, j*16f, 16f, TexturedCube.BEDROCK));
-
-				for (int k = 1; k < CUBE_COUNT; k++) {
-					TexturedCube cube = new TexturedCube(i*16f,k*16f,j*16f,16f,TexturedCube.DIRT);
-					this.cubes.add(cube);
-
-					if (i > 0 && i < CUBE_COUNT-1 && j > 0 && j < CUBE_COUNT-1) {
-						cube.deactivate();
-					} else {
-						// deactivate top and bottom faces
-						cube.deactivateFace(Cube.TOP, Cube.BOT);
-					}
-				}
-
-				this.cubes.add(new TexturedCube(i*16f, (CUBE_COUNT)*16f, j*16f, 16f, TexturedCube.GRASS));
-			}
-		}
+		this.chunks = new ArrayList<>();
+		scene = new SimpleScene();
 	}
 
 	// method: setExit
@@ -93,7 +77,7 @@ public class Main {
 	// method: glInit
 	// purpose: initializes GL to be able to display a 3d scene correctly with a black background
 	private void glInit() {
-		GL11.glClearColor(0, 0, 0, 0);
+		GL11.glClearColor(0.8667f, 0.9333f, 1f, 1f);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GLU.gluPerspective(screenHeight, screenWidth/(float)screenHeight, 0.1f, screenWidth);
@@ -124,9 +108,7 @@ public class Main {
 			GL11.glBegin(GL11.GL_QUADS);
 
 			// uses stream() to filter cubes and draw each active one
-			cubes.stream()
-					  .filter(cube -> cube.isActive())
-					  .forEach(cube -> cube.draw());
+			scene.draw();
 
 			GL11.glEnd();
 

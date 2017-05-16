@@ -17,7 +17,7 @@ public class TexturedCube implements Cube {
 	ArrayList<float[][]> faces;
 	private float[][] vertices;
 
-	private static final HashMap<Integer, Object[]> textureLibrary = new HashMap<>();
+	public static final HashMap<Integer, Object[]> textureLibrary = new HashMap<>();
 
 	public TexturedCube(float x, float y, float z, float edgeLength) {
 		this(x,y,z,edgeLength,1+(int)(Math.random()*6));
@@ -90,12 +90,13 @@ public class TexturedCube implements Cube {
 	private void addFace(int v0, int v1, int v2, int v3) {
 		faces.add(new float[][] {
 				  vertices[v0],vertices[v1],vertices[v2],vertices[v3],
-				  {(float)Math.random(),(float)Math.random(),(float)Math.random(), 1f}
+				  {(float)Math.random(),(float)Math.random(),(float)Math.random(), 1f, type}
 		});
 	}
 
 	public void deactivate() {
 		this.active = false;
+		deactivateFace(FRONT,RIGHT,BACK,LEFT,TOP,BOT);
 	}
 
 	public boolean isActive() {
@@ -106,6 +107,13 @@ public class TexturedCube implements Cube {
 		for (int i: face) {
 			faces.get(i)[4][3] = 0f;
 		}
+	}
+
+	// in case chunks only want to deal with faces when drawing
+	public void addActiveFaces(ArrayList<float[][]> list) {
+		faces.stream()
+				  .filter(face -> face[4][3] == 1f)
+				  .forEach(face -> list.add(face));
 	}
 
 	public static void initTextureLibrary() {
