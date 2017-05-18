@@ -46,6 +46,29 @@ public class SimpleChunk {
 		cubes.add(cube);
 	}
 
+	public SimpleChunk(float x, float y, float z, float edgeLength, int height, int type) {
+		TexturedCube cube;
+
+		this.activeFaces = new ArrayList<>();
+		this.cubes = new ArrayList<>();
+
+		// bottom cube
+		cube = new TexturedCube(x,y,z,edgeLength, type);
+		cube.deactivateFace(Cube.TOP);
+		cubes.add(cube);
+
+		for (int i = 1; i < height; i++) {
+			cube = new TexturedCube(x,i*edgeLength + y,z,edgeLength, type);
+			cube.deactivateFace(Cube.TOP, Cube.BOT);
+			cubes.add(cube);
+		}
+
+		// top cube
+		cube = new TexturedCube(x,height*edgeLength + y,z,edgeLength, type);
+		cube.deactivateFace(Cube.BOT);
+		cubes.add(cube);
+	}
+
 	// method: setFaces
 	// purpose: rebuilds set of active faces
 	public void setFaces() {
@@ -101,5 +124,9 @@ public class SimpleChunk {
 	// purpose: adds all active faces to the given list
 	public void addFaces(ArrayList<float[][]> list) {
 		list.addAll(this.activeFaces);
+	}
+
+	public void merge(SimpleChunk chunk) {
+		chunk.cubes.forEach(cube -> cubes.add(cube));
 	}
 }

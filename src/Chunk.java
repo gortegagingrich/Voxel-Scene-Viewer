@@ -24,17 +24,44 @@ public class Chunk {
 	// constructor: Chunk()
 	// purpose: generate a height matrix using simplex noise and place 30x30 towers of cubes with generated heights
 	public Chunk() {
-		int i,j;
+		int i,j, height;
+		int seed;
 		SimplexNoise sn;
 
-		sn = new SimplexNoise(20,0.15, (int)System.currentTimeMillis());
+		seed = (int)System.currentTimeMillis();
+		sn = new SimplexNoise(20,0.15, seed);
 		heightMatrix = new int[Main.CUBE_COUNT][Main.CUBE_COUNT];
 		chunks = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
 
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
-				heightMatrix[i][j] = 10 + (int)(20*sn.getNoise(i,j));//(int)sn.getNoise(i,j);
-				chunks[i][j] = new SimpleChunk(i*EDGE_LENGTH,0,j*EDGE_LENGTH,EDGE_LENGTH,heightMatrix[i][j]);
+				height = 1+(int)(20*sn.getNoise(i,j));
+				heightMatrix[i][j] = (height > 0) ? height : 0;
+				chunks[i][j] = new SimpleChunk(i*EDGE_LENGTH,0,j*EDGE_LENGTH,EDGE_LENGTH,heightMatrix[i][j], Cube.BEDROCK);
+			}
+		}
+
+		seed *= seed;
+		sn = new SimplexNoise(20,0.2, seed);
+
+		for (i = 0; i < Main.CUBE_COUNT; i++) {
+			for (j = 0; j < Main.CUBE_COUNT; j++) {
+				height = 5+(int)(20*sn.getNoise(i,j));
+				SimpleChunk chunk = new SimpleChunk(i*EDGE_LENGTH, 0,j*EDGE_LENGTH, EDGE_LENGTH, height, Cube.STONE);
+				chunks[i][j].merge(chunk);
+				heightMatrix[i][j] = Math.max(heightMatrix[i][j], height);
+			}
+		}
+
+		seed *= seed;
+		sn = new SimplexNoise(10,0.18, seed);
+
+		for (i = 0; i < Main.CUBE_COUNT; i++) {
+			for (j = 0; j < Main.CUBE_COUNT; j++) {
+				height = 5+(int)(18*sn.getNoise(i,j));
+				SimpleChunk chunk = new SimpleChunk(i*EDGE_LENGTH, 0,j*EDGE_LENGTH, EDGE_LENGTH, height, Cube.DIRT);
+				chunks[i][j].merge(chunk);
+				heightMatrix[i][j] = Math.max(heightMatrix[i][j], height);
 			}
 		}
 
@@ -45,9 +72,7 @@ public class Chunk {
 	// method: draw
 	// purpose: draws each active cube face with the proper texture
 	public void draw() {
-		// everything should use the same Texture, so it only needs to be bound once
 		TexturedCube.texture.bind();
-
 		activeFaces.forEach(face -> {
 			float x,y, height, width;
 			Object[] value;
