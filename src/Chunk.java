@@ -45,17 +45,19 @@ public class Chunk {
 	// method: draw
 	// purpose: draws each active cube face with the proper texture
 	public void draw() {
+		// everything should use the same Texture, so it only needs to be bound once
+		TexturedCube.texture.bind();
+
 		activeFaces.forEach(face -> {
 			float x,y, height, width;
 			Object[] value;
 
 			// bind texture and set values for offsets and sizes
 			value = TexturedCube.textureLibrary.get((int)face[4][4]);
-			((Texture)value[0]).bind();
-			x = (Float)value[1];
-			y = (Float)value[2];
-			width = (Float)value[3];
-			height = (Float)value[4];
+			x = (Float)value[0];
+			y = (Float)value[1];
+			width = (Float)value[2];
+			height = (Float)value[3];
 
 			// draw activeFaces
 			GL11.glTexCoord2f(x, y);

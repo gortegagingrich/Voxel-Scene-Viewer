@@ -22,7 +22,7 @@ public class Main {
 	private          Camera          camera;
 	private Chunk scene;
 
-	private static final String CAPTION = "Program _";
+	private static final String CAPTION = "Checkpoint 3";
 	public static final int CUBE_COUNT = 30;
 
 	// constructor: Main(int, int, float, float, int)
@@ -64,7 +64,7 @@ public class Main {
 		Display.create();
 		Display.setVSyncEnabled(true); // noticed tearing on my old computer
 
-		TexturedCube.initTextureLibrary();
+		TexturedCube.initTextureLibrary("textures/block2.png","textures/block.csv");
 		inputInit();
 		glInit();
 		render();
@@ -96,6 +96,8 @@ public class Main {
 			camera.lookThrough();
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
