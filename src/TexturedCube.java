@@ -8,9 +8,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Gabriel on 2017/05/09.
- */
+/***************************************************************
+ * file: TexturedCube.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 2
+ * date last modified: 5/17/2017
+ *
+ * purpose: Cube implementation that allows for drawing textured
+ * objects
+ *
+ ****************************************************************/
 public class TexturedCube implements Cube {
 	private int     type;
 	private boolean active;
@@ -19,10 +28,14 @@ public class TexturedCube implements Cube {
 
 	public static final HashMap<Integer, Object[]> textureLibrary = new HashMap<>();
 
+	// constructor: TexturedCube(xPos, yPos, zPos, edgeLength)
+	// purpose: creates textured cube with a random type
 	public TexturedCube(float x, float y, float z, float edgeLength) {
 		this(x,y,z,edgeLength,1+(int)(Math.random()*6));
 	}
 
+	// constructor: TexturedCube(xPos, yPos, zPos, edgeLength, type)
+	// purpose: creates textured cube with a given type
 	public TexturedCube(float x, float y, float z, float edgeLength, int type) {
 		this.faces = new ArrayList<>();
 		this.type = type;
@@ -55,6 +68,8 @@ public class TexturedCube implements Cube {
 		addFace(1,0,4,5);
 	}
 
+	// method: draw
+	// purpose: draws each of the cube's active faces with the type's corresponding texture
 	public void draw() {
 		Object[] value;
 		float x,y,width, height;
@@ -66,7 +81,7 @@ public class TexturedCube implements Cube {
 		width = (Float)value[3];
 		height = (Float)value[4];
 
-		// only draw active faces
+		// only draw active activeFaces
 		faces.stream()
 				  .filter(face -> face[4][3] == 1f)
 				  .forEach(face -> {
@@ -87,6 +102,8 @@ public class TexturedCube implements Cube {
 		TextureImpl.bindNone();
 	}
 
+	// method: addFace
+	// purpose: adds an active face with the given vertex indeces
 	private void addFace(int v0, int v1, int v2, int v3) {
 		faces.add(new float[][] {
 				  vertices[v0],vertices[v1],vertices[v2],vertices[v3],
@@ -94,28 +111,37 @@ public class TexturedCube implements Cube {
 		});
 	}
 
+	// method: deactivate
+	// purpose: set active to false and deactivate all faces
 	public void deactivate() {
 		this.active = false;
 		deactivateFace(FRONT,RIGHT,BACK,LEFT,TOP,BOT);
 	}
 
+	// method: isActive
+	// purpose: quick check if the cube is active
 	public boolean isActive() {
 		return active;
 	}
 
+	// method: deactivateFace
+	// purpose: deactivates a particular face or set of faces
 	public void deactivateFace(int... face) {
 		for (int i: face) {
 			faces.get(i)[4][3] = 0f;
 		}
 	}
 
-	// in case chunks only want to deal with faces when drawing
+	// method: addActiveFaces
+	// purpose: adds only the active faces to the given list
 	public void addActiveFaces(ArrayList<float[][]> list) {
 		faces.stream()
 				  .filter(face -> face[4][3] == 1f)
 				  .forEach(face -> list.add(face));
 	}
 
+	// method: initTextureLibrary
+	// purpose: builds the textureLibrary and defines specific textures corresponding to different cube types
 	public static void initTextureLibrary() {
 		Texture texture;
 		Object[] value;
@@ -144,6 +170,8 @@ public class TexturedCube implements Cube {
 		}
 	}
 
+	// method: addTextureEntry
+	// purpose: adds an entry to the textureLibrary
 	private static void addTextureEntry(int type, Texture texture, float xOffset, float yOffset, float texWidth, float texHeight) {
 		Object[] value;
 

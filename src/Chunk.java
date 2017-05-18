@@ -1,19 +1,28 @@
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureImpl;
 import provided.SimplexNoise;
 
 import java.util.ArrayList;
 
-/**
- * Created by Gabriel on 2017/05/16.
- */
+/***************************************************************
+ * file: Chunk.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 2
+ * date last modified: 5/17/2017
+ *
+ * purpose: Simple chunk implementation for a static scene
+ *
+ ****************************************************************/
 public class Chunk {
 	private static final float EDGE_LENGTH = 16;
 	private SimpleChunk[][] chunks;
 	private int[][] heightMatrix;
-	private ArrayList<float[][]> faces;
+	private ArrayList<float[][]> activeFaces;
 
+	// constructor: Chunk()
+	// purpose: generate a height matrix using simplex noise and place 30x30 towers of cubes with generated heights
 	public Chunk() {
 		int i,j;
 		SimplexNoise sn;
@@ -29,12 +38,14 @@ public class Chunk {
 			}
 		}
 
-		faces = new ArrayList<>();
-		cleanseFaces();
+		activeFaces = new ArrayList<>();
+		resetFaces();
 	}
 
+	// method: draw
+	// purpose: draws each active cube face with the proper texture
 	public void draw() {
-		faces.forEach(face -> {
+		activeFaces.forEach(face -> {
 			float x,y, height, width;
 			Object[] value;
 
@@ -46,7 +57,7 @@ public class Chunk {
 			width = (Float)value[3];
 			height = (Float)value[4];
 
-			// draw faces
+			// draw activeFaces
 			GL11.glTexCoord2f(x, y);
 			GL11.glVertex3f(face[0][0], face[0][1], face[0][2]);
 
@@ -62,10 +73,12 @@ public class Chunk {
 		});
 	}
 
-	private void cleanseFaces() {
+	// method: resetFaces
+	// purpose: clears current set of activeFaces, deactivates unneeded cubes and activeFaces, and rebuilds active face set
+	private void resetFaces() {
 		SimpleChunk chunk;
 
-		faces.clear();
+		activeFaces.clear();
 
 		for (int i = 0; i < Main.CUBE_COUNT; i++) {
 			for (int j = 0; j < Main.CUBE_COUNT; j++) {
@@ -85,7 +98,7 @@ public class Chunk {
 				}
 
 				chunk.setFaces();
-				chunk.addFaces(faces);
+				chunk.addFaces(activeFaces);
 			}
 		}
 	}

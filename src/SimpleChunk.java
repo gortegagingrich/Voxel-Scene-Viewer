@@ -4,17 +4,29 @@ import org.newdawn.slick.opengl.TextureImpl;
 
 import java.util.ArrayList;
 
-/**
- * Created by Gabriel on 2017/05/13.
- */
+/***************************************************************
+ * file: SimpleChunk.java
+ * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
+ * class: CS 445 – Computer Graphics
+ *
+ * assignment: Quarter Project - Checkpoint 2
+ * date last modified: 5/17/2017
+ *
+ * purpose: This class describes an object
+ * that is essentially a tower of cubes with functions that
+ * facilitate deactivating activeFaces across ranges of cubes.
+ *
+ ****************************************************************/
 public class SimpleChunk {
-	ArrayList<float[][]> faces;
+	ArrayList<float[][]> activeFaces;
 	ArrayList<TexturedCube> cubes;
 
+	// constructor: (xPosition, yPosition, zPosition, edgeLength, height (in cubes))
+	// purpose: creates the given number of cubes stacked on top of each other at the given position
 	public SimpleChunk(float x, float y, float z, float edgeLength, int height) {
 		TexturedCube cube;
 
-		this.faces = new ArrayList<>();
+		this.activeFaces = new ArrayList<>();
 		this.cubes = new ArrayList<>();
 
 		// bottom cube
@@ -34,13 +46,17 @@ public class SimpleChunk {
 		cubes.add(cube);
 	}
 
+	// method: setFaces
+	// purpose: rebuilds set of active faces
 	public void setFaces() {
-		faces.clear();
-		cubes.stream().filter(cube -> cube.isActive()).forEach(cube -> cube.addActiveFaces(faces));
+		activeFaces.clear();
+		cubes.stream().filter(cube -> cube.isActive()).forEach(cube -> cube.addActiveFaces(activeFaces));
 	}
 
+	// method: draw
+	// purpose: draws each active face with the appropriate texture
 	public void draw() {
-		faces.forEach(face -> {
+		activeFaces.forEach(face -> {
 			float x,y, height, width;
 			Object[] value;
 
@@ -52,7 +68,7 @@ public class SimpleChunk {
 			width = (Float)value[3];
 			height = (Float)value[4];
 
-			// draw faces
+			// draw activeFaces
 			GL11.glTexCoord2f(x, y);
 			GL11.glVertex3f(face[0][0], face[0][1], face[0][2]);
 
@@ -71,6 +87,9 @@ public class SimpleChunk {
 		});
 	}
 
+	// method: deactivateRange
+	// purpose: goes through set of cubes from the given minimum height to the given maximum height, and deactivates
+	// the faces passed
 	public void deactivateRange(int bot, int top, int... face) {
 		while (bot < cubes.size() && bot <= top) {
 			cubes.get(bot).deactivateFace(face);
@@ -78,7 +97,9 @@ public class SimpleChunk {
 		}
 	}
 
+	// method: addFaces
+	// purpose: adds all active faces to the given list
 	public void addFaces(ArrayList<float[][]> list) {
-		list.addAll(this.faces);
+		list.addAll(this.activeFaces);
 	}
 }

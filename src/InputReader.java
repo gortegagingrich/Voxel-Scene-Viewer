@@ -7,7 +7,7 @@ import java.util.HashMap;
  * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
  * class: CS 445 – Computer Graphics
  *
- * assignment: Quarter Project - Checkpoint 1
+ * assignment: Quarter Project - Checkpoint 2
  * date last modified: 5/9/2017
  *
  * purpose: This Runnable class handles reading all of the
