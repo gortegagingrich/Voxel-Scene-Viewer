@@ -127,6 +127,20 @@ public class SimpleChunk {
 	}
 
 	public void merge(SimpleChunk chunk) {
-		chunk.cubes.forEach(cube -> cubes.add(cube));
+		int curSize = cubes.size();
+
+		chunk.cubes.forEach(cube ->  {
+			if (cube.getY() > cubes.get(cubes.size() - 1).getY()) {
+				cubes.add(cube);
+			}
+		});
+
+		if (curSize != cubes.size()) {
+			cubes.get(curSize-1).deactivateFace(Cube.TOP);
+		}
+	}
+
+	public int getHeight() {
+		return cubes.size();
 	}
 }

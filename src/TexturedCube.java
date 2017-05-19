@@ -171,4 +171,12 @@ public class TexturedCube implements Cube {
 		System.out.printf("added type mapping: %d, %.4f, %.4f, %.4f, %.4f\n",
 				  type, xOffset, yOffset, texWidth, texHeight);
 	}
+
+	public float getY() {
+		return vertices[0][1];
+	}
+
+	public int getType() {
+		return type;
+	}
 }

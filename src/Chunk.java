@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class Chunk {
 	private static final float EDGE_LENGTH = 16;
 	private SimpleChunk[][] chunks;
+	private SimpleChunk[][] dirt;
+	private SimpleChunk[][] stone;
 	private int[][] heightMatrix;
 	private ArrayList<float[][]> activeFaces;
 
@@ -32,11 +34,13 @@ public class Chunk {
 		sn = new SimplexNoise(20,0.15, seed);
 		heightMatrix = new int[Main.CUBE_COUNT][Main.CUBE_COUNT];
 		chunks = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
+		stone = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
+		dirt = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
 
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
 				height = 1+(int)(20*sn.getNoise(i,j));
-				heightMatrix[i][j] = (height > 0) ? height : 0;
+				heightMatrix[i][j] = (height > 0) ? height : 1;
 				chunks[i][j] = new SimpleChunk(i*EDGE_LENGTH,0,j*EDGE_LENGTH,EDGE_LENGTH,heightMatrix[i][j], Cube.BEDROCK);
 			}
 		}
@@ -47,21 +51,27 @@ public class Chunk {
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
 				height = 5+(int)(20*sn.getNoise(i,j));
-				SimpleChunk chunk = new SimpleChunk(i*EDGE_LENGTH, 0,j*EDGE_LENGTH, EDGE_LENGTH, height, Cube.STONE);
-				chunks[i][j].merge(chunk);
-				heightMatrix[i][j] = Math.max(heightMatrix[i][j], height);
+				stone[i][j] = new SimpleChunk(i * EDGE_LENGTH, 0, j * EDGE_LENGTH, EDGE_LENGTH, height, Cube.STONE);
+
+				if (height > heightMatrix[i][j]) {
+					chunks[i][j].merge(stone[i][j]);
+					heightMatrix[i][j] = height;
+				}
 			}
 		}
 
 		seed *= seed;
-		sn = new SimplexNoise(10,0.18, seed);
+		sn = new SimplexNoise(10,0.12, seed);
 
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
-				height = 5+(int)(18*sn.getNoise(i,j));
-				SimpleChunk chunk = new SimpleChunk(i*EDGE_LENGTH, 0,j*EDGE_LENGTH, EDGE_LENGTH, height, Cube.DIRT);
-				chunks[i][j].merge(chunk);
-				heightMatrix[i][j] = Math.max(heightMatrix[i][j], height);
+				height = 7+(int)(18*sn.getNoise(i,j));
+				dirt[i][j] = new SimpleChunk(i * EDGE_LENGTH, 0, j * EDGE_LENGTH, EDGE_LENGTH, height, Cube.DIRT);
+
+				if (height > heightMatrix[i][j]) {
+					chunks[i][j].merge(dirt[i][j]);
+					heightMatrix[i][j] = height;
+				}
 			}
 		}
 
