@@ -143,4 +143,12 @@ public class SimpleChunk {
 	public int getHeight() {
 		return cubes.size();
 	}
+
+	public TexturedCube getTop() {
+		return cubes.get(cubes.size() - 1);
+	}
+
+	public void addCube(TexturedCube cube) {
+		cubes.add(cube);
+	}
 }

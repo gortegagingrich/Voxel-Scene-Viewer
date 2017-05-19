@@ -1,5 +1,4 @@
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.opengl.Texture;
 import provided.SimplexNoise;
 
 import java.util.ArrayList;
@@ -18,8 +17,6 @@ import java.util.ArrayList;
 public class Chunk {
 	private static final float EDGE_LENGTH = 16;
 	private SimpleChunk[][] chunks;
-	private SimpleChunk[][] dirt;
-	private SimpleChunk[][] stone;
 	private int[][] heightMatrix;
 	private ArrayList<float[][]> activeFaces;
 
@@ -34,9 +31,11 @@ public class Chunk {
 		sn = new SimplexNoise(20,0.15, seed);
 		heightMatrix = new int[Main.CUBE_COUNT][Main.CUBE_COUNT];
 		chunks = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
-		stone = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
-		dirt = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
+		SimpleChunk[][] stone = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
+		SimpleChunk[][] dirt = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
+		ArrayList<TexturedCube> water = new ArrayList<>();
 
+		// add bedrock layer
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
 				height = 1+(int)(20*sn.getNoise(i,j));
@@ -46,8 +45,9 @@ public class Chunk {
 		}
 
 		seed *= seed;
-		sn = new SimplexNoise(20,0.2, seed);
+		sn = new SimplexNoise(20,0.20, seed);
 
+		// add stone layer
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
 				height = 5+(int)(20*sn.getNoise(i,j));
@@ -61,8 +61,9 @@ public class Chunk {
 		}
 
 		seed *= seed;
-		sn = new SimplexNoise(10,0.12, seed);
+		sn = new SimplexNoise(20,0.20, seed);
 
+		// add dirt layer
 		for (i = 0; i < Main.CUBE_COUNT; i++) {
 			for (j = 0; j < Main.CUBE_COUNT; j++) {
 				height = 7+(int)(18*sn.getNoise(i,j));
@@ -75,8 +76,48 @@ public class Chunk {
 			}
 		}
 
+		// add grass and sand
+		for (i = 0; i < Main.CUBE_COUNT; i++) {
+			for (j = 0; j < Main.CUBE_COUNT; j++) {
+				TexturedCube cube;
+
+				if (chunks[i][j].getTop().getType() == Cube.DIRT) {
+					cube = new TexturedCube(i*EDGE_LENGTH,chunks[i][j].getTop().getY() + EDGE_LENGTH, j*EDGE_LENGTH, EDGE_LENGTH, Cube.GRASS);
+				} else {
+					cube = new TexturedCube(i*EDGE_LENGTH,chunks[i][j].getTop().getY() + EDGE_LENGTH, j*EDGE_LENGTH, EDGE_LENGTH, Cube.SAND);
+				}
+
+				chunks[i][j].getTop().deactivateFace(Cube.TOP);
+				chunks[i][j].addCube(cube);
+				heightMatrix[i][j]++;
+				cube.deactivateFace(Cube.BOT);
+			}
+		}
+
+		// deal with water
+
+		// find square with minimum height
+		int minX, minZ, minHeight;
+
+		minX = 0;
+		minZ = 0;
+		minHeight = 99999;
+
+		for (i = 0; i < Main.CUBE_COUNT; i++) {
+			for (j = 0; j < Main.CUBE_COUNT; j++) {
+				if (heightMatrix[i][j] < minHeight) {
+					minHeight = heightMatrix[i][j];
+				}
+			}
+		}
+
 		activeFaces = new ArrayList<>();
 		resetFaces();
+
+		// fill water
+		fillWater(minHeight+3,Cube.BOT);
+		fillWater(minHeight+2,Cube.TOP,Cube.BOT);
+		fillWater(minHeight+1,Cube.TOP,Cube.BOT);
 	}
 
 	// method: draw
@@ -138,5 +179,45 @@ public class Chunk {
 				chunk.addFaces(activeFaces);
 			}
 		}
+	}
+
+	private void fillWater(int y, int... faces) {
+		int i,j;
+		ArrayList<TexturedCube> water;
+		TexturedCube tempCube;
+
+		water = new ArrayList<>();
+
+		for (i = 0; i < Main.CUBE_COUNT; i++) {
+			for (j = 0; j < Main.CUBE_COUNT; j++) {
+				if (heightMatrix[i][j] < y) {
+					tempCube = new TexturedCube(i*EDGE_LENGTH,y*EDGE_LENGTH,j*EDGE_LENGTH,EDGE_LENGTH,Cube.WATER);
+					tempCube.deactivateFace(faces);
+
+					if (i != 0) {
+						tempCube.deactivateFace(Cube.LEFT);
+						System.out.print("deactivate left... ");
+					}
+					if (i != Main.CUBE_COUNT-1) {
+						tempCube.deactivateFace(Cube.RIGHT);
+						System.out.print("deactivate Right... ");
+					}
+					if (j != 0) {
+						tempCube.deactivateFace(Cube.FRONT);
+						System.out.print("deactivate front... ");
+					}
+					if (j != Main.CUBE_COUNT-1) {
+						tempCube.deactivateFace(Cube.BACK);
+						System.out.print("deactivate back... ");
+					}
+					System.out.println();
+
+					water.add(tempCube);
+				}
+			}
+		}
+
+		// add water cubes to active faces
+		water.forEach(cube -> cube.addActiveFaces(activeFaces));
 	}
 }
