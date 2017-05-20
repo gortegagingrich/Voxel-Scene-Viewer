@@ -23,7 +23,7 @@ public class Main {
 	private Chunk scene;
 
 	private static final String CAPTION = "Checkpoint 3";
-	public static final int CUBE_COUNT = 30;
+	public static final int CUBE_COUNT = 60;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -33,7 +33,6 @@ public class Main {
 		this.frameRate = frameRate;
 		this.shouldExit = false;
 		this.camera = new Camera(-120, -240, -120);
-		scene = new Chunk();
 	}
 
 	// method: setExit
@@ -91,6 +90,8 @@ public class Main {
 	// method: render
 	// purpose: contains the main loop that looks through the camera and draws each cube
 	private void render() {
+		scene = new Chunk();
+
 		while (!shouldExit && !Display.isCloseRequested()) {
 			GL11.glLoadIdentity();
 			camera.lookThrough();
@@ -98,6 +99,8 @@ public class Main {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+			GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
 			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 

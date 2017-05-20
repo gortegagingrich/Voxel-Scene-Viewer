@@ -28,7 +28,7 @@ public class TexturedCube implements Cube {
 	ArrayList<float[][]> faces;
 	private float[][] vertices;
 
-	public static final HashMap<Integer, Object[]> textureLibrary = new HashMap<>();
+	public static final HashMap<Integer, float[]> textureLibrary = new HashMap<>();
 	public static Texture texture;
 
 	// constructor: TexturedCube(xPos, yPos, zPos, edgeLength)
@@ -163,9 +163,9 @@ public class TexturedCube implements Cube {
 	// method: addTextureEntry
 	// purpose: adds an entry to the textureLibrary
 	private static void addTextureEntry(int type, float xOffset, float yOffset, float texWidth, float texHeight) {
-		Object[] value;
+		float[] value;
 
-		value = new Object[] {xOffset, yOffset, texWidth, texHeight};
+		value = new float[] {xOffset, yOffset, texWidth, texHeight};
 		textureLibrary.put(type, value);
 
 		System.out.printf("added type mapping: %d, %.4f, %.4f, %.4f, %.4f\n",
