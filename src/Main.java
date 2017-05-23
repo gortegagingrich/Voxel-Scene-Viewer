@@ -33,6 +33,7 @@ public class Main {
 		this.frameRate = frameRate;
 		this.shouldExit = false;
 		this.camera = new Camera(-120, -240, -120);
+		this.scene = null;
 	}
 
 	// method: setExit
@@ -119,6 +120,10 @@ public class Main {
 
 		shouldExit = true;
 		Display.destroy();
+	}
+
+	public Chunk getScene() {
+		return scene;
 	}
 
 	// method: main
