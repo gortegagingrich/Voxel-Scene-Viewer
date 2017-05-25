@@ -230,10 +230,26 @@ public class Chunk {
 		return heightMatrix;
 	}
 
-	public float getHeight(float x, float z) {
+	public boolean pointCollision(float x, float y, float z) {
+		x *= -1;
+		y *= -1;
+		z *= -1;
+
+		return (getHeight(x,z) >= y - EDGE_LENGTH);
+	}
+
+	private float getHeight(float x, float z) {
+		float out;
+
 		x /= EDGE_LENGTH;
 		z /= EDGE_LENGTH;
 
-		return (EDGE_LENGTH) * heightMatrix[(int)x][(int)z];
+		if (x < 0 || x >= Main.CUBE_COUNT || z < 0 || z >= Main.CUBE_COUNT) {
+			out = Float.MIN_VALUE;
+		} else {
+			out = (EDGE_LENGTH) * heightMatrix[(int) x][(int) z];
+		}
+
+		return out;
 	}
 }
