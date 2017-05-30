@@ -20,6 +20,7 @@ public class Camera {
 	private SimpleLight simpleLight;
 	private Vector3f position;
 	private Vector3f lightPosition;
+	private Main parent;
 	private float    yaw;
 	private float    pitch;
 
@@ -31,6 +32,11 @@ public class Camera {
 		yaw = 0;
 		pitch = 0;
 		simpleLight = null;
+		parent = null;
+	}
+
+	public void setParent(Main parent) {
+		this.parent = parent;
 	}
 
 	// method: yaw
@@ -60,6 +66,10 @@ public class Camera {
 	public void move3f(float leftRight, float frontBack, float upDown) {
 		float dx, dz;
 
+		if (parent.getScene() == null) {
+			return; // no need to move if there is no scene
+		}
+
 		dx = 0;
 		dz = 0;
 
@@ -77,13 +87,28 @@ public class Camera {
 
 		// move according to calculated offsets
 		// might want to change this so that it doesn't move significantly faster diagonally
-		position.x -= dx;
-		position.z += dz;
-		lightPosition.x -= dx;
-		lightPosition.z += dz;
+		if (!parent.getScene().pointCollision(position.x-dx, position.y, position.z)) {
+			position.x -= dx;
+			lightPosition.x -= dx;
+		}
+
+		if (!parent.getScene().pointCollision(position.x, position.y, position.z+dz)) {
+			position.z += dz;
+			lightPosition.z += dz;
+		}
 
 		// move up or down
-		position.y -= upDown * SPEED;
+		if (!parent.getScene().pointCollision(position.x, position.y - upDown * SPEED, position.z)) {
+			position.y -= upDown * SPEED;
+		}
+
+		if (parent != null && parent.getScene() != null) {
+			if (parent.getScene().isUnderWater(this.position)) {
+				simpleLight.setTint(true);
+			} else {
+				simpleLight.setTint(false);
+			}
+		}
 	}
 
 	// method: lookThrough

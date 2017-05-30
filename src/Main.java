@@ -34,6 +34,7 @@ public class Main {
 		this.frameRate = frameRate;
 		this.shouldExit = false;
 		this.camera = new Camera(-120, -240, -120);
+		camera.setParent(this);
 		this.scene = null;
 	}
 

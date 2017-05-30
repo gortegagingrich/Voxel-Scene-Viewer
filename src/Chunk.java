@@ -1,4 +1,5 @@
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 import provided.SimplexNoise;
 
 import javax.swing.JOptionPane;
@@ -324,7 +325,11 @@ public class Chunk {
 		}
 	}
 
-	public int getWaterLevel() {
+	private int getWaterLevel() {
 		return this.waterLevel;
+	}
+
+	public boolean isUnderWater(Vector3f currentPosition) {
+		return (currentPosition.y/EDGE_LENGTH*-1 < getWaterLevel() + 1);
 	}
 }
