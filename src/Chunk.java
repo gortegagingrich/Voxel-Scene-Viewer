@@ -26,6 +26,7 @@ public class Chunk {
 	private int[][] heightMatrix;
 	private volatile ArrayList<float[][]> activeFaces;
 	private int seed;
+	private int waterLevel;
 
 	// constructor: Chunk()
 	// purpose: generate a height matrix using simplex noise and place 30x30 towers of cubes with generated heights
@@ -124,6 +125,7 @@ public class Chunk {
 		resetFaces();
 
 		// fill water
+		waterLevel = minHeight + 3;
 		fillWater(minHeight+3,Cube.BOT);
 		fillWater(minHeight+2,Cube.TOP,Cube.BOT);
 		fillWater(minHeight+1,Cube.TOP,Cube.BOT);
@@ -320,5 +322,9 @@ public class Chunk {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int getWaterLevel() {
+		return this.waterLevel;
 	}
 }
