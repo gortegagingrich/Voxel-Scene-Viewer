@@ -26,7 +26,7 @@ public class InputReader implements Runnable {
       this.keyStates = new HashMap<>();
       this.mouseSensitivity = 0.5f;
 
-      Mouse.setGrabbed(false);
+      Mouse.setGrabbed(true);
 
       // key id gets mapped to {current state, consumed}
       addKey(Keyboard.KEY_ESCAPE);

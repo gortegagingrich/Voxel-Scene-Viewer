@@ -3,6 +3,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.vector.Vector3f;
 
 /***************************************************************
  * file: Main.java
@@ -23,7 +24,7 @@ public class Main {
 	private Chunk scene;
 
 	private static final String CAPTION = "Checkpoint 3";
-	public static final int CUBE_COUNT = 60;
+	public static final int CUBE_COUNT = 30;
 
 	// constructor: Main(int, int, float, float, int)
 	// purpose: sets window properties and creates a camera and a random cube
@@ -93,6 +94,7 @@ public class Main {
 	private void render() {
 		Chunk.initChunk();
 		scene = new Chunk();
+		Vector3f pos;
 
 		while (!shouldExit && !Display.isCloseRequested()) {
 			GL11.glLoadIdentity();
@@ -117,6 +119,10 @@ public class Main {
 
 			Display.update();
 			Display.sync(frameRate);
+			pos = camera.getPosition();
+			Display.setTitle(String.format("(%.1f,%.1f,%.1f) %s",
+					  0-pos.x, 0-pos.y, 0-pos.z,
+					  scene.pointCollision(pos.x,pos.y,pos.z) ? "Collision" : "No Collision"));
 		}
 
 		shouldExit = true;
@@ -134,6 +140,8 @@ public class Main {
 	// method: main
 	// purpose: static method called to start the program.
 	public static void main(String[] args) {
+		// todo: figure out if XInitThreads issue is also present in Windows
+
 		Main main = new Main(640, 480, 0, 0, 60);
 		try {
 			main.start();
