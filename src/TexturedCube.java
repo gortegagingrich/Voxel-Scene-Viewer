@@ -1,6 +1,4 @@
-import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -15,7 +13,7 @@ import java.util.Scanner;
  * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
  * class: CS 445 – Computer Graphics
  *
- * assignment: Quarter Project - Checkpoint 2
+ * assignment: Quarter Project - Checkpoint 3
  * date last modified: 5/17/2017
  *
  * purpose: Cube implementation that allows for drawing textured
@@ -30,12 +28,6 @@ public class TexturedCube implements Cube {
 
 	public static final HashMap<Integer, float[]> textureLibrary = new HashMap<>();
 	public static Texture texture;
-
-	// constructor: TexturedCube(xPos, yPos, zPos, edgeLength)
-	// purpose: creates textured cube with a random type
-	public TexturedCube(float x, float y, float z, float edgeLength) {
-		this(x,y,z,edgeLength,1+(int)(Math.random()*6));
-	}
 
 	// constructor: TexturedCube(xPos, yPos, zPos, edgeLength, type)
 	// purpose: creates textured cube with a given type
@@ -172,10 +164,14 @@ public class TexturedCube implements Cube {
 				  type, xOffset, yOffset, texWidth, texHeight);
 	}
 
+	// method: getY
+	// purpose: return Y position of vertex 0,1
 	public float getY() {
 		return vertices[0][1];
 	}
 
+	// method: getType
+	// purpose: returns the cube's type
 	public int getType() {
 		return type;
 	}

@@ -8,7 +8,7 @@ import java.util.HashMap;
  * class: CS 445 – Computer Graphics
  *
  * assignment: Quarter Project - Checkpoint 2
- * date last modified: 5/9/2017
+ * date last modified: 5/29/2017
  *
  * purpose: This Runnable class handles reading all of the
  * keyboard and mouse inputs and any of the associated actions.

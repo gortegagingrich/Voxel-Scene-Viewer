@@ -13,14 +13,14 @@ import java.util.HashMap;
  * author: G. Ortega-Gingrich, C. Kim, N.H. Alsufiani, Y. Yan
  * class: CS 445 – Computer Graphics
  *
- * assignment: Quarter Project - Checkpoint 2
- * date last modified: 5/17/2017
+ * assignment: Quarter Project - Checkpoint 3
+ * date last modified: 5/30/2017
  *
  * purpose: Simple chunk implementation for a static scene
  *
  ****************************************************************/
 public class Chunk {
-	private static final HashMap<String, Integer> seeds = new HashMap<>();
+	private static final HashMap<String, Integer> SEEDS = new HashMap<>();
 
 	private static final float EDGE_LENGTH = 16;
 	private SimpleChunk[][] chunks;
@@ -36,6 +36,8 @@ public class Chunk {
 		generateFromSeed();
 	}
 
+	// method: generateFromSeed
+	// purpose: generates scene from the preset seed
 	public void generateFromSeed() {
 		SimplexNoise sn;
 		int i,j, height, seed;
@@ -166,7 +168,7 @@ public class Chunk {
 				GL11.glVertex3f(face[3][0], face[3][1], face[3][2]);
 			});
 		} catch (ConcurrentModificationException e) {
-			System.out.println("skipped frome...");
+			System.out.println("skipped frame...");
 		}
 	}
 
@@ -200,6 +202,8 @@ public class Chunk {
 		}
 	}
 
+	// method: fillWater
+	// purpose: adds water above the lowest three heights in the height matrix
 	private void fillWater(int y, int... faces) {
 		int i,j;
 		ArrayList<TexturedCube> water;
@@ -235,14 +239,8 @@ public class Chunk {
 		water.forEach(cube -> cube.addActiveFaces(activeFaces));
 	}
 
-
-	public int[][] getHeightMatrix() {
-		// this would be used for collisions, so it would be called a lot
-		// that means safely copying the matrix would not be a good idea
-		// be sure not to modify the result
-		return heightMatrix;
-	}
-
+	// method: pointCollision
+	// purpose: tests to see if the given point is within the terrain
 	public boolean pointCollision(float x, float y, float z) {
 		x *= -1;
 		y *= -1;
@@ -251,6 +249,8 @@ public class Chunk {
 		return (getHeight(x,z) >= y - EDGE_LENGTH);
 	}
 
+	// method: getHeight
+	// purpose: returns the height at the given x,z coordinate
 	private float getHeight(float x, float z) {
 		float out;
 
@@ -266,45 +266,48 @@ public class Chunk {
 		return out;
 	}
 
+	// method: saveSeed
+	// purpose: asks to enter a name for the seed, and stores it a the static HashMap
 	public void saveSeed() {
 		String name;
 
 		name = JOptionPane.showInputDialog("Enter name to save seed:");
 
 		if (name != null && !name.equals("")) {
-			if (seeds.containsKey(name)) {
-				seeds.remove(name);
+			if (SEEDS.containsKey(name)) {
+				SEEDS.remove(name);
 			}
 
-			seeds.put(name, seed);
+			SEEDS.put(name, seed);
 		}
 	}
 
+	// method: readSeed
+	// purpose: asks user to input a string and sets the corresponding seed
 	public void readSeed() {
 		String name;
-		int seed;
 
 		name = JOptionPane.showInputDialog("Enter seed's name.\nLeave blank to generate random seed.");
 
-		while (name != null && !name.equals("") && !seeds.containsKey(name)) {
-			name = JOptionPane.showInputDialog("Enter a different name.\nLeave blank to generate random seed.");
-		}
-
 		if (name != null && !name.equals("")) {
-			this.seed = seeds.get(name);
+			if (SEEDS.containsKey(name)) {
+				this.seed = SEEDS.get(name);
+			}
 		} else {
-			this.seed = (int)System.currentTimeMillis() + (int)System.nanoTime() % 300;
+			this.seed = (int)System.currentTimeMillis() + (int)System.nanoTime() % 30000;
 		}
 	}
 
+	// method: initChunk
+	// purpose: reads HashMap<String, Integer> from disk and adds contents to SEEDS
 	public static void initChunk() {
-		// parse a file containing stored seeds and add the
+		// parse a file containing stored SEEDS and add the
 		HashMap<String, Integer> fromFile;
 		File file = new File("SavedChunks.dat");
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 			fromFile = (HashMap<String, Integer>) ois.readObject();
-			seeds.putAll(fromFile);
+			SEEDS.putAll(fromFile);
 			ois.close();
 		} catch (IOException e) {
 			System.out.println("Could not find \"SavedChunks.dat\"");
@@ -313,23 +316,23 @@ public class Chunk {
 		}
 	}
 
+	// method: storeChunk
+	// purpose: writes SEEDS to disk to be accessed in the future.
 	public static void storeChunk() {
 		File file = new File("SavedChunks.dat");
 		ObjectOutputStream oos = null;
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(file));
-			oos.writeObject(seeds);
+			oos.writeObject(SEEDS);
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private int getWaterLevel() {
-		return this.waterLevel;
-	}
-
+	// method: isUnderWater
+	// purpose: checks to see if given point is under water
 	public boolean isUnderWater(Vector3f currentPosition) {
-		return (currentPosition.y/EDGE_LENGTH*-1 < getWaterLevel() + 1);
+		return (currentPosition.y/EDGE_LENGTH*-1 < waterLevel + 1);
 	}
 }
