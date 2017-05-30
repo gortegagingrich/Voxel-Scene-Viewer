@@ -1,10 +1,11 @@
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import provided.SimplexNoise;
 
-import java.nio.FloatBuffer;
+import javax.swing.JOptionPane;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 
 /***************************************************************
  * file: Chunk.java
@@ -18,21 +19,26 @@ import java.util.ArrayList;
  *
  ****************************************************************/
 public class Chunk {
+	private static final HashMap<String, Integer> seeds = new HashMap<>();
+
 	private static final float EDGE_LENGTH = 16;
 	private SimpleChunk[][] chunks;
 	private int[][] heightMatrix;
-	private ArrayList<float[][]> activeFaces;
-	private int vboVertex, vboColor, vboTexture;
-	private FloatBuffer vertices, textures;
+	private volatile ArrayList<float[][]> activeFaces;
+	private int seed;
 
 	// constructor: Chunk()
 	// purpose: generate a height matrix using simplex noise and place 30x30 towers of cubes with generated heights
 	public Chunk() {
-		int i,j, height;
-		int seed;
-		SimplexNoise sn;
+		readSeed();
+		generateFromSeed();
+	}
 
-		seed = (int)System.currentTimeMillis();
+	public void generateFromSeed() {
+		SimplexNoise sn;
+		int i,j, height, seed;
+
+		seed = this.seed;
 		sn = new SimplexNoise(20,0.15, seed);
 		heightMatrix = new int[Main.CUBE_COUNT][Main.CUBE_COUNT];
 		chunks = new SimpleChunk[Main.CUBE_COUNT][Main.CUBE_COUNT];
@@ -128,33 +134,37 @@ public class Chunk {
 	public void draw() {
 		TexturedCube.texture.bind();
 
-		activeFaces.forEach(face -> {
-			float x,y, height, width;
-			float[] value;
+		try {
+			activeFaces.forEach(face -> {
+				float x, y, height, width;
+				float[] value;
 
-			// bind texture and set values for offsets and sizes
-			value = TexturedCube.textureLibrary.get((int)face[4][4]);
-			x = value[0];
-			y = value[1];
-			width = value[2];
-			height = value[3];
+				// bind texture and set values for offsets and sizes
+				value = TexturedCube.textureLibrary.get((int) face[4][4]);
+				x = value[0];
+				y = value[1];
+				width = value[2];
+				height = value[3];
 
-			// draw activeFaces
-			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-			GL11.glTexCoord2f(x, y);
-			GL11.glVertex3f(face[0][0], face[0][1], face[0][2]);
+				// draw activeFaces
+				GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+				GL11.glTexCoord2f(x, y);
+				GL11.glVertex3f(face[0][0], face[0][1], face[0][2]);
 
-			GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-			GL11.glTexCoord2f(x+width, y);
-			GL11.glVertex3f(face[1][0], face[1][1], face[1][2]);
+				GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+				GL11.glTexCoord2f(x + width, y);
+				GL11.glVertex3f(face[1][0], face[1][1], face[1][2]);
 
-			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-			GL11.glTexCoord2f(x+width,y+height);
-			GL11.glVertex3f(face[2][0], face[2][1], face[2][2]);
+				GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+				GL11.glTexCoord2f(x + width, y + height);
+				GL11.glVertex3f(face[2][0], face[2][1], face[2][2]);
 
-			GL11.glTexCoord2f(x,y+height);
-			GL11.glVertex3f(face[3][0], face[3][1], face[3][2]);
-		});
+				GL11.glTexCoord2f(x, y + height);
+				GL11.glVertex3f(face[3][0], face[3][1], face[3][2]);
+			});
+		} catch (ConcurrentModificationException e) {
+			System.out.println("skipped frome...");
+		}
 	}
 
 	// method: resetFaces
@@ -235,5 +245,64 @@ public class Chunk {
 		z /= EDGE_LENGTH;
 
 		return (EDGE_LENGTH) * heightMatrix[(int)x][(int)z];
+	}
+
+	public void saveSeed() {
+		String name;
+
+		name = JOptionPane.showInputDialog("Enter name to save seed:");
+
+		if (name != null && !name.equals("")) {
+			if (seeds.containsKey(name)) {
+				seeds.remove(name);
+			}
+
+			seeds.put(name, seed);
+		}
+	}
+
+	public void readSeed() {
+		String name;
+		int seed;
+
+		name = JOptionPane.showInputDialog("Enter seed's name.\nLeave blank to generate random seed.");
+
+		while (name != null && !name.equals("") && !seeds.containsKey(name)) {
+			name = JOptionPane.showInputDialog("Enter a different name.\nLeave blank to generate random seed.");
+		}
+
+		if (name != null && !name.equals("")) {
+			this.seed = seeds.get(name);
+		} else {
+			this.seed = (int)System.currentTimeMillis() + (int)System.nanoTime() % 300;
+		}
+	}
+
+	public static void initChunk() {
+		// parse a file containing stored seeds and add the
+		HashMap<String, Integer> fromFile;
+		File file = new File("SavedChunks.dat");
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+			fromFile = (HashMap<String, Integer>) ois.readObject();
+			seeds.putAll(fromFile);
+			ois.close();
+		} catch (IOException e) {
+			System.out.println("Could not find \"SavedChunks.dat\"");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void storeChunk() {
+		File file = new File("SavedChunks.dat");
+		ObjectOutputStream oos = null;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(file));
+			oos.writeObject(seeds);
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

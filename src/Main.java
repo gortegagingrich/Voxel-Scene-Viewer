@@ -91,6 +91,7 @@ public class Main {
 	// method: render
 	// purpose: contains the main loop that looks through the camera and draws each cube
 	private void render() {
+		Chunk.initChunk();
 		scene = new Chunk();
 
 		while (!shouldExit && !Display.isCloseRequested()) {
@@ -119,6 +120,10 @@ public class Main {
 		}
 
 		shouldExit = true;
+
+		scene.saveSeed();
+		Chunk.storeChunk();
+
 		Display.destroy();
 	}
 

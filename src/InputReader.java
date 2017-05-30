@@ -37,6 +37,7 @@ public class InputReader implements Runnable {
       addKey(Keyboard.KEY_SPACE);
       addKey(Keyboard.KEY_LSHIFT);
       addKey(Keyboard.KEY_TAB);
+      addKey(Keyboard.KEY_R);
    }
 
    // method: run
@@ -140,6 +141,12 @@ public class InputReader implements Runnable {
       if (!keyStates.get(Keyboard.KEY_TAB)[1]) {
          Mouse.setGrabbed(!Mouse.isGrabbed());
          keyStates.get(Keyboard.KEY_TAB)[1] = true;
+      }
+
+      if (!keyStates.get(Keyboard.KEY_R)[1]) {
+         parent.getScene().readSeed();
+         parent.getScene().generateFromSeed();
+         keyStates.get(Keyboard.KEY_R)[1] = true;
       }
    }
 
