@@ -17,7 +17,9 @@ public class Camera {
 	private static final float MIN_PITCH = -90;
 	private static final float MAX_PITCH = 90;
 	private static final float SPEED = 1f;
+	private SimpleLight simpleLight;
 	private Vector3f position;
+	private Vector3f lightPosition;
 	private float    yaw;
 	private float    pitch;
 
@@ -25,8 +27,10 @@ public class Camera {
 	// purpose: initializes the position to the given point and initializes yaw and pitch.
 	public Camera(float x, float y, float z) {
 		position = new Vector3f(x,y,z);
+		lightPosition = new Vector3f(x,y,z);
 		yaw = 0;
 		pitch = 0;
+		simpleLight = null;
 	}
 
 	// method: yaw
@@ -75,6 +79,8 @@ public class Camera {
 		// might want to change this so that it doesn't move significantly faster diagonally
 		position.x -= dx;
 		position.z += dz;
+		lightPosition.x -= dx;
+		lightPosition.z += dz;
 
 		// move up or down
 		position.y -= upDown * SPEED;
@@ -87,6 +93,12 @@ public class Camera {
 		GL11.glRotatef(pitch,1f,0f,0f);
 		GL11.glRotatef(yaw,0f,1f,0f);
 		GL11.glTranslatef(position.x, position.y, position.z);
+
+		if (simpleLight == null) {
+			simpleLight = new SimpleLight();
+			simpleLight.init();
+		}
+		simpleLight.setLightBuffer(lightPosition);
 	}
 
 	// method: getPosition
